@@ -1,7 +1,7 @@
 # DMARC Monitoring Setup
 
 Aggregate reporting configuration and analysis guidance for all domains
-under the nextlayersec.io M365 tenant.
+under the primary M365 tenant.
 
 ---
 
@@ -10,7 +10,7 @@ under the nextlayersec.io M365 tenant.
 All three domains send DMARC aggregate reports to a single destination:
 
 ```
-rua=mailto:dmarc@nextlayersec.io
+rua=mailto:dmarc@domain-1.io
 ```
 
 This consolidates reporting across all domains into one inbox for unified visibility.
@@ -19,21 +19,23 @@ This consolidates reporting across all domains into one inbox for unified visibi
 
 ## DMARC Records
 
-### nextlayersec.io
+### domain-1.io
 ```
-v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
-```
-
-### nextlayersec.dev
-```
-v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
+v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
-### mattlevorson.com (post-migration)
+### domain-2.dev
 ```
-v=DMARC1; p=none; rua=mailto:dmarc@nextlayersec.io
+v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
-Start at `p=none` for new domain migrations. Tighten after 2-4 weeks of clean reports.
+
+### domain-3.com
+```
+v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
+```
+
+> All three domains are at full enforcement.
+> For new domain migrations start at p=none and tighten after 2-4 weeks of clean reports.
 
 ---
 
@@ -83,10 +85,10 @@ Use DMARCian or similar tool to parse and visualize.
 For new domains or after significant changes:
 
 ```
-Week 1-2:  p=none  -- monitoring only, no enforcement
-Week 3-4:  p=none  -- continue monitoring, verify no legitimate failures
+Week 1-2:  p=none       -- monitoring only, no enforcement
+Week 3-4:  p=none       -- continue monitoring, verify no legitimate failures
 Month 2:   p=quarantine -- failed mail goes to spam
-Month 3+:  p=reject -- failed mail rejected outright
+Month 3+:  p=reject     -- failed mail rejected outright
 ```
 
 Only move to next level when aggregate reports show zero legitimate source failures.
@@ -110,8 +112,9 @@ inbound mail delivery. Relevant when MTA-STS is in `testing` mode -- reports
 show failures that would cause delivery rejection in `enforce` mode.
 
 All three domains send TLS-RPT reports to:
+
 ```
-rua=mailto:tlsrpt@nextlayersec.io
+rua=mailto:tlsrpt@domain-1.io
 ```
 
 ### What triggers a TLS-RPT report
@@ -123,6 +126,43 @@ rua=mailto:tlsrpt@nextlayersec.io
 - Review TLS-RPT reports for 2+ weeks in testing mode
 - Zero failures = safe to enforce
 - Any failures = investigate before enforcing
+
+---
+
+## CAA Records
+
+CAA records restrict which Certificate Authorities are authorized to issue
+SSL/TLS certificates for your domain. Without CAA any CA can issue a cert
+for your domain. With CAA only authorized CAs can issue.
+
+### Records deployed on all three domains
+
+```
+domain.tld    CAA    0 issue "pki.goog"
+domain.tld    CAA    0 issue "letsencrypt.org"
+domain.tld    CAA    0 issue "digicert.com"
+domain.tld    CAA    0 issuewild "pki.goog"
+domain.tld    CAA    0 issuewild "letsencrypt.org"
+domain.tld    CAA    0 issuewild "digicert.com"
+domain.tld    CAA    0 iodef "mailto:admin@domain-1.io"
+```
+
+> Current Cloudflare CA: Google Trust Services (pki.goog)
+> DigiCert and Let's Encrypt included for CA flexibility if Cloudflare switches providers.
+
+### Why CAA matters alongside DNSSEC
+DNSSEC prevents DNS record tampering. CAA prevents unauthorized certificate issuance.
+Together they close two separate attack paths against your domain identity:
+- Attacker cannot poison your DNS records — DNSSEC
+- Attacker cannot obtain a fraudulent cert for your domain — CAA
+
+---
+
+## S/MIME
+
+S/MIME signing is enabled on the primary domain mailbox.
+S/MIME operates independently of CAA records — CAA governs SSL/TLS issuance only
+and does not affect S/MIME certificate provisioning or signing behavior.
 
 ---
 
