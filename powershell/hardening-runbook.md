@@ -1,7 +1,7 @@
 # Exchange Online Hardening Runbook
 
 Full PowerShell hardening baseline for M365 Business Premium tenants.
-Validated on nextlayersec.io tenant -- April 2026.
+Validated on production tenant -- April 2026.
 
 ---
 
@@ -40,7 +40,7 @@ After enabling, update in DNS and mta-sts.txt:
 ## 2. Legacy Authentication
 
 ```powershell
-# Block all legacy auth protocols (use colon syntax for $false)
+# Block all legacy auth protocols
 Set-AuthenticationPolicy -Identity "YourPolicyName" `
   -AllowBasicAuthActiveSync:$false `
   -AllowBasicAuthAutodiscover:$false `
@@ -70,7 +70,7 @@ Get-AuthenticationPolicy -Identity "YourPolicyName" | Format-List Name, AllowBas
 Get-User -ResultSize Unlimited | Format-List DisplayName, AuthenticationPolicy, UserPrincipalName
 ```
 
-Note: If backtick line continuation fails, run as single line with colon syntax on $false.
+> If backtick line continuation fails, run as single line with colon syntax on $false.
 
 ---
 
@@ -111,16 +111,20 @@ Get-Mailbox -ResultSize Unlimited | Where-Object {
 ## 5. Mailbox Protocol Hardening
 
 ```powershell
-# Disable POP, IMAP, ActiveSync at mailbox level (belt and suspenders on top of auth policy)
+# Disable POP and IMAP at mailbox level
+# ActiveSync is scoped to managed devices via Conditional Access -- not disabled here
 Get-CasMailbox -ResultSize Unlimited | Set-CasMailbox `
   -PopEnabled $false `
-  -ImapEnabled $false `
-  -ActiveSyncEnabled $false
+  -ImapEnabled $false
 
 # Verify
 Get-CasMailbox -Identity user@yourdomain.com | Format-List `
   PopEnabled, ImapEnabled, OWAEnabled, ActiveSyncEnabled, MAPIEnabled
 ```
+
+> ActiveSync is enforced through Conditional Access device compliance policy.
+> Compliant Intune-managed devices retain ActiveSync access.
+> Unmanaged devices are blocked at the Conditional Access layer.
 
 ---
 
@@ -216,7 +220,8 @@ Get-InboundConnector | Format-List Name, Enabled, TlsSenderCertificateName, Requ
 | Legacy auth | `Get-AuthenticationPolicy` | All `AllowBasicAuth*: False` |
 | SMTP auth | `Get-TransportConfig` | `SmtpClientAuthenticationDisabled: True` |
 | Auto-forward | `Get-RemoteDomain Default` | `AutoForwardEnabled: False` |
-| POP/IMAP/ActiveSync | `Get-CasMailbox` | All `False` |
+| POP/IMAP | `Get-CasMailbox` | `PopEnabled: False, ImapEnabled: False` |
+| ActiveSync | Conditional Access | Scoped to compliant devices via Intune |
 | Mailbox audit | `Get-Mailbox` | `AuditEnabled: True` |
 | Unified audit log | `Get-AdminAuditLogConfig` | `UnifiedAuditLogIngestionEnabled: True` |
 | Outbound spam notify | `Get-HostedOutboundSpamFilterPolicy` | `NotifyOutboundSpam: True` |
@@ -240,8 +245,9 @@ Break glass account requirements:
 - No authentication policy assigned
 - Excluded from all Conditional Access policies in Entra ID
 - No MFA registered
-- Long complex password stored offline (not in password manager)
+- Long complex password stored offline — not in a password manager
 - Sign-in alert configured in Entra ID monitoring
+- Reviewed quarterly
 
 ---
 
@@ -249,9 +255,10 @@ Break glass account requirements:
 
 | Control | Status | Justification | Reviewed |
 |---|---|---|---|
-| OWA LinkedIn Integration | Enabled | Actively used for NextLayerSec business development. OAuth-based, low risk. | 2026-04-18 |
+| OWA LinkedIn Integration | Enabled | Actively used for business development. OAuth-based, low risk. | 2026-04-18 |
+| ActiveSync | Scoped | Not disabled at mailbox level. Enforced via Conditional Access device compliance. | 2026-04-18 |
 
 ---
 
-*NextLayerSec -- nextlayersec.io*
+*NextLayerSec*
 *Last validated: April 2026*
