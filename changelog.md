@@ -5,22 +5,18 @@ This file serves as the audit trail for domain security deployments and configur
 
 ---
 
-## 2026-04-23 -- Infrastructure Complete
+## 2026-04-23 -- Full Stack Complete
 
-### domain-3.com
-- Completed M365 migration
-- Deployed full authentication stack — SPF, DKIM, DMARC p=reject
-- MTA-STS deployed and enforced
-- DNSSEC enabled and validated
-
-### domain-2.dev
-- DKIM configured and validated
-- MTA-STS deployed and enforced
-- DNSSEC enabled and validated
-
-### All Domains
-- S/MIME signing configured on primary domain (domain-1.io)
-- Full email security stack validated across all three domains
+### All Domains — domain-1.io, domain-2.dev, domain-3.com
+- Full email security stack validated and equal across all three domains
+- SPF — PASS
+- DKIM — configured and signing
+- DMARC — `p=reject` enforced
+- MTA-STS — `enforce` mode, validated
+- DNSSEC — enabled and validated
+- DNSSEC-aware MX — `p-v1.mx.microsoft` endpoint active on all domains
+- TLS-RPT — configured and reporting
+- S/MIME — signing enabled on primary domain, applied across tenant
 
 ---
 
@@ -65,8 +61,8 @@ This file serves as the audit trail for domain security deployments and configur
 
 ## Pending
 
-- [ ] All domains -- BIMI configuration (post-DMARC enforce validation)
 - [ ] All domains -- CAA record deployment
+- [ ] All domains -- BIMI configuration (post-CAA deployment)
 
 ---
 
