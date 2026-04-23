@@ -6,7 +6,7 @@
 [![Domains](https://img.shields.io/badge/Domains-3_Hardened-00c853?style=flat-square)](https://nextlayersec.io)
 [![MTA-STS](https://img.shields.io/badge/MTA--STS-Enforced-00c853?style=flat-square)](https://mta-sts.nextlayersec.io/.well-known/mta-sts.txt)
 [![DNSSEC](https://img.shields.io/badge/DNSSEC-Enabled-00c853?style=flat-square)](https://dnssec-analyzer.verisignlabs.com/nextlayersec.io)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/License-CC%20BY--ND%204.0-blue?style=flat-square)](https://creativecommons.org/licenses/by-nd/4.0/)
 
 ---
 
@@ -54,11 +54,11 @@ The full stack is required for complete inbound mail path hardening.
 
 ## Domain Coverage
 
-| Domain | SPF | DKIM | DMARC | MTA-STS | DNSSEC | TLS-RPT |
-|---|:---:|:---:|:---:|:---:|:---:|:---:|
-| `domain-1.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
-| `domain-2.dev` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
-| `domain-3.com` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
+| Domain | SPF | DKIM | DMARC | MTA-STS | DNSSEC | DNSSEC-aware MX | TLS-RPT |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| `domain-1.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
+| `domain-2.dev` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
+| `domain-3.com` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
 
 > All three domains are active aliases under a single M365 Business Premium tenant.
 > Each domain is fully hardened against spoofing and independently validated.
@@ -71,30 +71,42 @@ The full stack is required for complete inbound mail path hardening.
 ```
 nextlayersec-email-security/
 |
-|-- mta-sts/
-|   |-- domain-1.md                 # MTA-STS deployment - domain-1
-|   |-- domain-2.md                 # MTA-STS deployment - domain-2
-|   `-- deployment-guide.md         # Repeatable deployment framework
+|-- dkim/
+|   |-- selector-management.md      # Selector configuration and DNS records
+|   |-- key-rotation.md             # Key rotation procedure and log
+|   `-- validation.md               # Validation procedures and current status
 |
-|-- exchange-online/
-|   |-- hardening-runbook.md        # Full PowerShell hardening session
-|   `-- baseline-checklist.md       # Verification checklist
+|-- dmarc/
+|   |-- monitoring-setup.md         # DMARC aggregate reporting setup
+|   `-- report-analysis.md          # Reading and acting on aggregate reports
 |
 |-- dns/
 |   |-- dnssec-deployment.md        # DNSSEC enablement via M365 PowerShell
 |   |-- cloudflare-records.md       # Full DNS record reference
 |   `-- record-templates.md         # Copy-paste DNS record templates
 |
-|-- dmarc/
-|   |-- monitoring-setup.md         # DMARC aggregate reporting setup
-|   `-- report-analysis.md          # Reading and acting on aggregate reports
+|-- domains/
+|   |-- _template.md                # Reusable onboarding template
+|   |-- domain-1.md                 # Domain-1 security record
+|   |-- domain-2.md                 # Domain-2 security record
+|   `-- domain-3.md                 # Domain-3 security record
+|
+|-- exchange-online/
+|   |-- hardening-runbook.md        # Full PowerShell hardening session
+|   `-- baseline-checklist.md       # Verification checklist
+|
+|-- mta-sts/
+|   |-- domain-1.md                 # MTA-STS deployment - domain-1
+|   |-- domain-2.md                 # MTA-STS deployment - domain-2
+|   `-- deployment-guide.md         # Repeatable deployment framework
 |
 |-- validation/
 |   |-- mxtoolbox-mta-sts.png       # MXToolbox MTA-STS validation
 |   |-- verisign-dnssec.png         # Verisign DNSSEC chain validation
 |   `-- powershell-dnssec.png       # Exchange Online PowerShell output
 |
-`-- README.md
+|-- README.md
+`-- changelog.md
 ```
 
 ---
@@ -262,7 +274,7 @@ v=DMARC1; p=reject; rua=mailto:dmarc@<domain>
 
 ## Exchange Online Hardening
 
-The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](powershell/hardening-runbook.md).
+The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](/exchange-online/hardening-runbook.md).
 
 ### Controls covered
 
@@ -271,7 +283,8 @@ The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook
 | Legacy auth lockdown | `Set-AuthenticationPolicy` | Blocks basic auth on all protocols |
 | SMTP client auth | `Set-TransportConfig` | Disables legacy SMTP relay tenant-wide |
 | External auto-forward | `Set-RemoteDomain` | Prevents exfiltration via mail forwarding rules |
-| Protocol hardening | `Set-CasMailbox` | Disables POP, IMAP, ActiveSync at mailbox level |
+| Protocol hardening | `Set-CasMailbox` | Disables POP and IMAP at mailbox level |
+| ActiveSync scoping | Conditional Access | Scoped to compliant Intune-managed devices |
 | Mailbox auditing | `Set-Mailbox` | 180-day audit log retention, all actions logged |
 | Outbound spam notify | `Set-HostedOutboundSpamFilterPolicy` | Alert on compromised account sending spam |
 | DNSSEC enablement | `Enable-DnssecForVerifiedDomain` | Switches to DNSSEC-aware MX endpoint |
@@ -291,10 +304,10 @@ The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook
 
 ---
 
-## Related Tools
+## Related Tools — Coming Soon
 
-- [**Invoke-M365SecurityBaseline**](https://github.com/Blackvectra/nextlayersec-m365-hardening) -- PowerShell script that runs a full security baseline check against any M365 tenant with color-coded pass/fail output
-- [**Invoke-EmailSecurityAssessment**](https://github.com/Blackvectra/nextlayersec-m365-hardening) -- Domain assessment script that checks the full email security stack via public DNS lookups with no tenant access required
+- **Invoke-M365SecurityBaseline** -- PowerShell script that runs a full security baseline check against any M365 tenant with color-coded pass/fail output
+- **Invoke-EmailSecurityAssessment** -- Domain assessment script that checks the full email security stack via public DNS lookups with no tenant access required
 
 ---
 
@@ -313,7 +326,7 @@ The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+CC BY-ND 4.0 -- See [LICENSE](LICENSE) for details.
 
 ---
 
