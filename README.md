@@ -262,7 +262,7 @@ v=DMARC1; p=reject; rua=mailto:dmarc@<domain>
 
 ## Exchange Online Hardening
 
-The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](/exchange-online/hardening-runbook.md).
+The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](powershell/hardening-runbook.md).
 
 ### Controls covered
 
