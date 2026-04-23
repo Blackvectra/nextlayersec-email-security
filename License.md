@@ -393,4 +393,4 @@ public licenses.
 
 Creative Commons may be contacted at creativecommons.org.
 
-Full license text: <https://creativecommons.org/licenses/by-nd/4.0/legalcode.txt>
+[Full license text](https://creativecommons.org/licenses/by-nd/4.0/legalcode.txt)
