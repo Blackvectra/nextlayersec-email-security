@@ -56,12 +56,13 @@ The full stack is required for complete inbound mail path hardening.
 
 | Domain | SPF | DKIM | DMARC | MTA-STS | DNSSEC | TLS-RPT |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| `nextlayersec.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
-| `nextlayersec.dev` | `-all` | PASS | `p=reject` | PASS | PASS | PASS |
-| `mattlevorson.com` | PASS | PASS | PASS | PASS | PASS | PASS |
+| `domain-1.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
+| `domain-2.dev` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
+| `domain-3.com` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
 
-> `nextlayersec.dev` is a parked domain with no mail flow.
-> SPF `-all` and DMARC `p=reject` close the spoofing surface with no MX record present.
+> All three domains are active aliases under a single M365 Business Premium tenant.
+> Each domain is fully hardened against spoofing and independently validated.
+> Domain names are anonymized for operational security purposes.
 
 ---
 
@@ -71,8 +72,8 @@ The full stack is required for complete inbound mail path hardening.
 nextlayersec-email-security/
 |
 |-- mta-sts/
-|   |-- nextlayersec-io.md          # MTA-STS deployment - nextlayersec.io
-|   |-- nextlayersec-dev.md         # Parked domain lockdown
+|   |-- domain-1.md                 # MTA-STS deployment - domain-1
+|   |-- domain-2.md                 # MTA-STS deployment - domain-2
 |   `-- deployment-guide.md         # Repeatable deployment framework
 |
 |-- exchange-online/
@@ -233,26 +234,29 @@ nslookup -type=DS yourdomain.com
 
 ---
 
-## Parked Domain Lockdown
+## Alias Domain Hardening
 
-Domains that do not send or receive email are active spoofing surfaces if left unprotected.
-A domain with no SPF or DMARC record can be used to send email that appears to originate
-from your organization.
+Alias domains that share mail flow with a primary domain are still active spoofing
+surfaces if left unprotected. A domain with no SPF or DMARC record can be used to
+send email that appears to originate from your organization regardless of whether
+it has an active MX record.
 
-### Required records for parked domains
+### Required records for alias domains
 
 ```
-# SPF - hard fail, nothing authorized to send
-v=spf1 -all
+# SPF - authorize the same sending infrastructure as primary
+v=spf1 include:spf.protection.outlook.com -all
 
-# DMARC - immediate reject, no monitoring phase needed
-v=DMARC1; p=reject;
+# DKIM - configure signing in Exchange Online for each domain
+# DMARC - full enforcement, no monitoring phase needed for aliases
+v=DMARC1; p=reject; rua=mailto:dmarc@<domain>
 
-# No MX record
+# MTA-STS - enforce TLS on inbound delivery
+# DNSSEC - sign all DNS records via registrar or Cloudflare
 ```
 
-> DKIM is not required on a parked domain as there is no signing infrastructure.
-> SPF `-all` and DMARC `p=reject` are sufficient to close the spoofing surface.
+> Each alias domain should be independently validated even if mail flow
+> is handled by the primary domain tenant configuration.
 
 ---
 
