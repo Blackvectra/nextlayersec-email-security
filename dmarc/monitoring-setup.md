@@ -137,19 +137,9 @@ for your domain. With CAA only authorized CAs can issue.
 
 ### Records deployed on all three domains
 
-```
-domain.tld    CAA    0 issue "pki.goog"
-domain.tld    CAA    0 issue "letsencrypt.org"
-domain.tld    CAA    0 issue "digicert.com"
-domain.tld    CAA    0 issuewild "pki.goog"
-domain.tld    CAA    0 issuewild "letsencrypt.org"
-domain.tld    CAA    0 issuewild "digicert.com"
-domain.tld    CAA    0 iodef "mailto:admin@domain-1.io"
-```
-
-> Current Cloudflare CA: Google Trust Services (pki.goog)
-> DigiCert and Let's Encrypt included for CA flexibility if Cloudflare switches providers.
-
+Together they close two separate attack paths against your domain identity:
+- Attacker cannot poison your DNS records — DNSSEC
+- Attacker cannot obtain a fraudulent cert for your domain — CAA
 ### Why CAA matters alongside DNSSEC
 DNSSEC prevents DNS record tampering. CAA prevents unauthorized certificate issuance.
 Together they close two separate attack paths against your domain identity:
