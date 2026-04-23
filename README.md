@@ -57,8 +57,8 @@ The full stack is required for complete inbound mail path hardening.
 | Domain | SPF | DKIM | DMARC | MTA-STS | DNSSEC | TLS-RPT |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
 | `nextlayersec.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Configured |
-| `nextlayersec.dev` | `-all` | N/A | `p=reject` | N/A (parked) | Pending | N/A |
-| `mattlevorson.com` | Pending | Pending | Pending | Pending | Pending | Pending |
+| `nextlayersec.dev` | `-all` | PASS | `p=reject` | PASS | PASS | PASS |
+| `mattlevorson.com` | PASS | PASS | PASS | PASS | PASS | PASS |
 
 > `nextlayersec.dev` is a parked domain with no mail flow.
 > SPF `-all` and DMARC `p=reject` close the spoofing surface with no MX record present.
