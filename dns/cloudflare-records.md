@@ -1,7 +1,9 @@
 # Cloudflare DNS Records Reference
 
-Complete DNS record reference for all domains managed through Cloudflare.
-All records are DNS-only (grey cloud) unless noted.
+Cloudflare-specific record reference and proxy/UI notes. For a
+provider-agnostic walkthrough see [`dns-setup.md`](dns-setup.md).
+
+All email-related records must be DNS-only (grey cloud) unless noted.
 
 ---
 
@@ -23,14 +25,19 @@ TTL: Auto
 ```
 Type: CNAME
 Name: selector1._domainkey
-Value: selector1-<tenant>._domainkey.microsoft.com
+Value: selector1-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 Proxy: DNS-only
 
 Type: CNAME
 Name: selector2._domainkey
-Value: selector2-<tenant>._domainkey.microsoft.com
+Value: selector2-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 Proxy: DNS-only
 ```
+
+> The `<domain-with-hyphens>` token is your domain with `.` replaced by `-`
+> (e.g. `domain-1.io` becomes `domain-1-io`).
+> The `<tenant>` token is the prefix of your M365 tenant's `*.onmicrosoft.com` domain.
+> Pull the exact CNAME values from the Defender portal — do not hand-construct them.
 
 ### DMARC
 

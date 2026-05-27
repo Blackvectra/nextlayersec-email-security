@@ -1,7 +1,7 @@
 # DKIM Selector Management
 
 Configuration and management reference for DKIM selectors across all domains
-in the NextLayerSec M365 tenant.
+in the primary M365 tenant.
 
 ---
 
@@ -62,12 +62,13 @@ Get-DkimSigningConfig -Identity yourdomain.com | Format-List Enabled, Selector1K
 ## Required DNS Records
 
 ```
-selector1._domainkey.<domain>    CNAME    selector1-<domain-onmicrosoft>._domainkey.microsoft.com
-selector2._domainkey.<domain>    CNAME    selector2-<domain-onmicrosoft>._domainkey.microsoft.com
+selector1._domainkey.<domain>    CNAME    selector1-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
+selector2._domainkey.<domain>    CNAME    selector2-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 ```
 
-> Replace `<domain-onmicrosoft>` with your tenant's onmicrosoft.com subdomain with hyphens replacing dots.
-> Example: `contoso-com._domainkey.microsoft.com`
+> `<domain-with-hyphens>`: your domain with `.` replaced by `-` (e.g. `domain-1.io` -> `domain-1-io`).
+> `<tenant>`: the prefix of your M365 tenant's `*.onmicrosoft.com` domain.
+> Always copy the exact CNAME values from the Defender portal — do not hand-construct them.
 
 ---
 
@@ -88,8 +89,8 @@ Expected output contains: `v=DKIM1; k=rsa; p=<public key>`
 | Domain | DKIM Enabled | Active Selector | Key Size |
 |---|:---:|:---:|:---:|
 | `domain-1.io` | Yes | selector1 | 2048 |
-| `domain-2.dev` | Yes | selector1 | 2048 |
-| `domain-3.com` | Yes | selector1 | 2048 |
+| `domain-2.dev` | Pending | — | — |
+| `domain-3.com` | Pending (pre-migration) | — | — |
 
 ---
 

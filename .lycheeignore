@@ -1,0 +1,9 @@
+# Sites that commonly rate-limit or 403 from GitHub Actions IPs
+^https?://(www\.)?linkedin\.com/
+^https?://mxtoolbox\.com/
+^https?://(www\.)?dmarcian\.com/
+^https?://toolbox\.googleapps\.com/
+
+# Anonymized placeholders that resolve to nothing
+^https?://(mta-sts\.)?domain-[0-9]+\.(io|dev|com)/
+^https?://<.+>

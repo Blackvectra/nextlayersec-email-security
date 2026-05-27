@@ -185,9 +185,11 @@ Also validate via MXToolbox and Verisign after DNS propagates (allow 5-10 minute
 
 | Domain Format | Standard MX | DNSSEC-Aware MX |
 |---|---|---|
-| `nextlayersec.io` | `nextlayersec-io.mail.protection.outlook.com` | `nextlayersec-io.p-v1.mx.microsoft` |
-| `nextlayersec.dev` | `nextlayersec-dev.mail.protection.outlook.com` | `nextlayersec-dev.p-v1.mx.microsoft` |
-| `mattlevorson.com` | `mattlevorson-com.mail.protection.outlook.com` | `mattlevorson-com.p-v1.mx.microsoft` |
+| `<domain>.io` | `<domain>-io.mail.protection.outlook.com` | `<domain>-io.p-v1.mx.microsoft` |
+| `<domain>.dev` | `<domain>-dev.mail.protection.outlook.com` | `<domain>-dev.p-v1.mx.microsoft` |
+| `<domain>.com` | `<domain>-com.mail.protection.outlook.com` | `<domain>-com.p-v1.mx.microsoft` |
+
+> Format: replace `.` in the domain with `-` and append the appropriate suffix.
 
 ---
 

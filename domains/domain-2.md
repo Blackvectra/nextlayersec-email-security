@@ -1,6 +1,6 @@
-# nextlayersec.dev -- Email Security Status
+# domain-2.dev -- Email Security Status
 
-Secondary brand domain. Added to M365 tenant as alias domain. Auth stack in progress.
+Secondary brand domain. Added to primary M365 tenant as alias domain. Auth stack in progress.
 
 ---
 
@@ -20,30 +20,30 @@ Secondary brand domain. Added to M365 tenant as alias domain. Auth stack in prog
 
 ## Pending Actions
 
-- [ ] Enable DKIM in Defender portal for `nextlayersec.dev`
-- [ ] Publish DKIM CNAME records in Cloudflare
+- [ ] Enable DKIM in Defender portal for `domain-2.dev`
+- [ ] Publish DKIM CNAME records in DNS
 - [ ] Add MX record pointing to M365
 - [ ] Create MTA-STS GitHub Pages repo or subfolder
-- [ ] Configure `mta-sts.nextlayersec.dev` CNAME in Cloudflare
+- [ ] Configure `mta-sts.domain-2.dev` CNAME in DNS
 - [ ] Deploy `_mta-sts` and `_smtp._tls` TXT records
-- [ ] Enable DNSSEC in Cloudflare zone
-- [ ] Run `Enable-DnssecForVerifiedDomain -DomainName nextlayersec.dev`
+- [ ] Enable DNSSEC in DNS provider
+- [ ] Run `Enable-DnssecForVerifiedDomain -DomainName domain-2.dev`
 - [ ] Update MX to DNSSEC-aware endpoint
-- [ ] Add `matthew@nextlayersec.dev` as alias on primary mailbox
+- [ ] Add owner alias on primary mailbox
 
 ---
 
 ## Deployment Notes
 
 ### Domain Role
-Alias domain -- mail sent to `@nextlayersec.dev` delivers to `mlevorson@nextlayersec.io` inbox.
+Alias domain -- mail sent to `@domain-2.dev` delivers to the primary inbox.
 No separate mailbox or license required.
 
 ### DNS Provider
 Cloudflare -- proxy must be disabled (grey cloud) on MTA-STS CNAME.
 
 ### DNSSEC Status
-`nextlayersec.dev` DNSSEC chain validated as signed via Verisign analyzer.
+DNSSEC chain validated as signed via Verisign analyzer.
 M365 enablement pending MTA-STS deployment.
 
 ---
@@ -52,14 +52,14 @@ M365 enablement pending MTA-STS deployment.
 
 ```powershell
 # Check domain in tenant
-Get-AcceptedDomain | Where-Object { $_.DomainName -eq "nextlayersec.dev" }
+Get-AcceptedDomain | Where-Object { $_.DomainName -eq "domain-2.dev" }
 
 # Check DKIM status
-Get-DkimSigningConfig -Identity nextlayersec.dev
+Get-DkimSigningConfig -Identity domain-2.dev
 
 # After MTA-STS deployed
-curl https://mta-sts.nextlayersec.dev/.well-known/mta-sts.txt
+curl https://mta-sts.domain-2.dev/.well-known/mta-sts.txt
 
 # After DNSSEC enabled
-Get-DnssecStatusForVerifiedDomain -DomainName nextlayersec.dev | Format-List *
+Get-DnssecStatusForVerifiedDomain -DomainName domain-2.dev | Format-List *
 ```

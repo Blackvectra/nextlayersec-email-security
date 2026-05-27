@@ -63,7 +63,7 @@ The full stack is required for complete inbound mail path hardening.
 > All three domains are active aliases under a single M365 Business Premium tenant.
 > The primary domain is fully hardened and independently validated.
 > Secondary and personal-brand domains are in progress -- see `/domains/` for per-domain status.
-> Domain names are anonymized in narrative docs; real names appear in `/dns/record-templates.md`.
+> Real domain names and tenant identifiers are intentionally not committed to this repository -- see [SECURITY.md](SECURITY.md).
 
 ---
 
@@ -82,15 +82,16 @@ nextlayersec-email-security/
 |   `-- report-analysis.md          # Reading and acting on aggregate reports
 |
 |-- dns/
+|   |-- dns-setup.md                # Provider-agnostic DNS setup guide
+|   |-- cloudflare-records.md       # Cloudflare-specific record reference
 |   |-- dnssec-deployment.md        # DNSSEC enablement via M365 PowerShell
-|   |-- cloudflare-records.md       # Full DNS record reference
 |   `-- record-templates.md         # Copy-paste DNS record templates
 |
 |-- domains/
 |   |-- _template.md                # Reusable onboarding template
-|   |-- nextlayersec-io.md          # Primary domain security record
-|   |-- nextlayersec-dev.md         # Dev domain security record
-|   `-- mattlevorson-com.md         # Personal domain security record
+|   |-- domain-1.md                 # Primary domain security record
+|   |-- domain-2.md                 # Secondary domain security record
+|   `-- domain-3.md                 # Personal-brand domain security record
 |
 |-- exchange-online/
 |   |-- hardening-runbook.md        # Full PowerShell hardening session

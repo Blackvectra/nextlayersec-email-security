@@ -22,7 +22,7 @@ Create a new public repository. Recommended naming convention:
 <domain>-mta-sts
 ```
 
-Example: `nextlayersec-mta-sts`
+Example: `<orgname>-mta-sts`
 
 ---
 
@@ -64,7 +64,7 @@ after validating with TLS-RPT reports. See [Enforce Mode](#enforce-mode) below.
 mta-sts.<yourdomain>
 ```
 
-Example: `mta-sts.nextlayersec.io`
+Example: `mta-sts.domain-1.io`
 
 ---
 

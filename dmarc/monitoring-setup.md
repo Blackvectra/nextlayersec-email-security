@@ -155,4 +155,4 @@ and does not affect S/MIME certificate provisioning or signing behavior.
 
 ---
 
-*NextLayerSec -- nextlayersec.io*
+*NextLayerSec*

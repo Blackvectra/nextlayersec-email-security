@@ -1,18 +1,22 @@
 # DNS Record Templates
 
 Copy-paste DNS record reference for deploying the full email security stack.
-All records validated in production across nextlayersec.io, nextlayersec.dev, and mattlevorson.com.
+Templates use placeholder values — substitute `<domain>`, `<tenant>`, and
+`<github-username>` with the values from your environment.
+
+> Real domain names and tenant identifiers are intentionally not committed
+> to this repository. See `SECURITY.md` for the rationale.
 
 ---
 
-## nextlayersec.io
+## domain-1.io (primary template — full stack)
 
 ### MX
 
 ```
 Type:     MX
 Name:     @
-Value:    nextlayersec-io.p-v1.mx.microsoft
+Value:    domain-1-io.p-v1.mx.microsoft
 Priority: 0
 ```
 
@@ -32,11 +36,11 @@ then publish the two CNAME records provided:
 ```
 Type:  CNAME
 Name:  selector1._domainkey
-Value: selector1-nextlayersec-io._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector1-domain-1-io._domainkey.<tenant>.onmicrosoft.com
 
 Type:  CNAME
 Name:  selector2._domainkey
-Value: selector2-nextlayersec-io._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector2-domain-1-io._domainkey.<tenant>.onmicrosoft.com
 ```
 
 ### DMARC
@@ -44,7 +48,7 @@ Value: selector2-nextlayersec-io._domainkey.Nextlayersec665.onmicrosoft.com
 ```
 Type:  TXT
 Name:  _dmarc
-Value: v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
+Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
 ### MTA-STS
@@ -52,16 +56,16 @@ Value: v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
 ```
 Type:   CNAME
 Name:   mta-sts
-Value:  blackvectra.github.io
+Value:  <github-username>.github.io
 Proxy:  DNS-only (grey cloud)
 
 Type:   TXT
 Name:   _mta-sts
-Value:  v=STSv1; id=20260418
+Value:  v=STSv1; id=YYYYMMDD
 
 Type:   TXT
 Name:   _smtp._tls
-Value:  v=TLSRPTv1; rua=mailto:tlsrpt@nextlayersec.io
+Value:  v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io
 ```
 
 ### Autodiscover
@@ -74,18 +78,22 @@ Value: autodiscover.outlook.com
 
 ---
 
-## nextlayersec.dev
+## domain-2.dev (secondary template — pre-DNSSEC MX)
+
+Use this template when the primary tenant DNSSEC has not yet been enabled
+for the domain. Switch to the `p-v1.mx.microsoft` endpoint after running
+`Enable-DnssecForVerifiedDomain`.
 
 ### MX
 
 ```
 Type:     MX
 Name:     @
-Value:    nextlayersec-dev.mail.protection.outlook.com
+Value:    domain-2-dev.mail.protection.outlook.com
 Priority: 0
 ```
 
-> Update to `nextlayersec-dev.p-v1.mx.microsoft` after DNSSEC enablement
+> Update to `domain-2-dev.p-v1.mx.microsoft` after DNSSEC enablement.
 
 ### SPF
 
@@ -100,11 +108,11 @@ Value: v=spf1 include:spf.protection.outlook.com -all
 ```
 Type:  CNAME
 Name:  selector1._domainkey
-Value: selector1-nextlayersec-dev._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector1-domain-2-dev._domainkey.<tenant>.onmicrosoft.com
 
 Type:  CNAME
 Name:  selector2._domainkey
-Value: selector2-nextlayersec-dev._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector2-domain-2-dev._domainkey.<tenant>.onmicrosoft.com
 ```
 
 ### DMARC
@@ -112,40 +120,46 @@ Value: selector2-nextlayersec-dev._domainkey.Nextlayersec665.onmicrosoft.com
 ```
 Type:  TXT
 Name:  _dmarc
-Value: v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
+Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
+
+> Aggregate reports for all alias domains can be consolidated to a single
+> reporting mailbox on the primary domain.
 
 ### MTA-STS
 
 ```
 Type:   CNAME
 Name:   mta-sts
-Value:  blackvectra.github.io
+Value:  <github-username>.github.io
 Proxy:  DNS-only (grey cloud)
 
 Type:   TXT
 Name:   _mta-sts
-Value:  v=STSv1; id=20260418
+Value:  v=STSv1; id=YYYYMMDD
 
 Type:   TXT
 Name:   _smtp._tls
-Value:  v=TLSRPTv1; rua=mailto:tlsrpt@nextlayersec.io
+Value:  v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io
 ```
 
 ---
 
-## mattlevorson.com
+## domain-3.com (personal-brand template — pre-migration)
+
+Use this template for a domain still hosted on an external provider
+that is migrating into the primary M365 tenant.
 
 ### MX
 
 ```
 Type:     MX
 Name:     @
-Value:    mattlevorson-com.mail.protection.outlook.com
+Value:    domain-3-com.mail.protection.outlook.com
 Priority: 0
 ```
 
-> Update to `mattlevorson-com.p-v1.mx.microsoft` after DNSSEC enablement
+> Update to `domain-3-com.p-v1.mx.microsoft` after DNSSEC enablement.
 
 ### SPF
 
@@ -160,11 +174,11 @@ Value: v=spf1 include:spf.protection.outlook.com -all
 ```
 Type:  CNAME
 Name:  selector1._domainkey
-Value: selector1-mattlevorson-com._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector1-domain-3-com._domainkey.<tenant>.onmicrosoft.com
 
 Type:  CNAME
 Name:  selector2._domainkey
-Value: selector2-mattlevorson-com._domainkey.Nextlayersec665.onmicrosoft.com
+Value: selector2-domain-3-com._domainkey.<tenant>.onmicrosoft.com
 ```
 
 ### DMARC
@@ -172,7 +186,7 @@ Value: selector2-mattlevorson-com._domainkey.Nextlayersec665.onmicrosoft.com
 ```
 Type:  TXT
 Name:  _dmarc
-Value: v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
+Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
 ### MTA-STS
@@ -180,16 +194,16 @@ Value: v=DMARC1; p=reject; rua=mailto:dmarc@nextlayersec.io
 ```
 Type:   CNAME
 Name:   mta-sts
-Value:  blackvectra.github.io
+Value:  <github-username>.github.io
 Proxy:  DNS-only (grey cloud)
 
 Type:   TXT
 Name:   _mta-sts
-Value:  v=STSv1; id=20260418
+Value:  v=STSv1; id=YYYYMMDD
 
 Type:   TXT
 Name:   _smtp._tls
-Value:  v=TLSRPTv1; rua=mailto:tlsrpt@nextlayersec.io
+Value:  v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io
 ```
 
 ---
@@ -197,8 +211,8 @@ Value:  v=TLSRPTv1; rua=mailto:tlsrpt@nextlayersec.io
 ## Notes
 
 - DKIM CNAME values are generated by M365 when DKIM is enabled in the Defender portal.
-  The values above follow the standard naming convention but verify against your actual
-  tenant onmicrosoft domain before publishing.
+  The values above follow the standard `selector<n>-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com`
+  convention but verify against your actual tenant portal values before publishing.
 - MTA-STS CNAME must be DNS-only in Cloudflare. Orange cloud breaks GitHub Pages TLS.
 - Update MX records and `mta-sts.txt` simultaneously when switching to DNSSEC-aware endpoint.
 - Bump `_mta-sts` TXT `id` value whenever `mta-sts.txt` content changes.
