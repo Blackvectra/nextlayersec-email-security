@@ -1,7 +1,7 @@
 # DKIM Validation
 
 Validation procedures and current status for DKIM signing across all domains
-in the NextLayerSec M365 tenant.
+in the primary M365 tenant.
 
 ---
 
@@ -62,8 +62,8 @@ Authentication-Results: mx.google.com;
 | Domain | DNS Records Published | Signing Enabled | Last Validated |
 |---|:---:|:---:|:---:|
 | `domain-1.io` | Yes | Yes | 2026-04-18 |
-| `domain-2.dev` | Yes | Yes | 2026-04-18 |
-| `domain-3.com` | Yes | Yes | 2026-04-23 |
+| `domain-2.dev` | Pending | Pending | — |
+| `domain-3.com` | Pending (pre-migration) | Pending | — |
 
 ---
 

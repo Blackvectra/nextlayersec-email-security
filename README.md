@@ -3,7 +3,7 @@
 > A production-validated email security hardening framework for M365 environments.
 > Built and deployed across multiple domains. Designed as a repeatable MSP delivery framework.
 
-[![Domains](https://img.shields.io/badge/Domains-3_Hardened-00c853?style=flat-square)](https://nextlayersec.io)
+[![Domains](https://img.shields.io/badge/Domains-1_Hardened_%2B_2_In_Progress-00c853?style=flat-square)](https://nextlayersec.io)
 [![MTA-STS](https://img.shields.io/badge/MTA--STS-Enforced-00c853?style=flat-square)](https://mta-sts.nextlayersec.io/.well-known/mta-sts.txt)
 [![DNSSEC](https://img.shields.io/badge/DNSSEC-Enabled-00c853?style=flat-square)](https://dnssec-analyzer.verisignlabs.com/nextlayersec.io)
 [![License](https://img.shields.io/badge/License-CC%20BY--ND%204.0-blue?style=flat-square)](https://creativecommons.org/licenses/by-nd/4.0/)
@@ -57,12 +57,13 @@ The full stack is required for complete inbound mail path hardening.
 | Domain | SPF | DKIM | DMARC | MTA-STS | DNSSEC | DNSSEC-aware MX | TLS-RPT |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | `domain-1.io` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
-| `domain-2.dev` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
-| `domain-3.com` | PASS | PASS | `p=reject` | `enforce` | Enabled | Enabled | Configured |
+| `domain-2.dev` | PASS | Pending | Deployed | Pending | Pending | Pending | Pending |
+| `domain-3.com` | iCloud | iCloud | Pending | Pending | Pending | Pending | Pending |
 
 > All three domains are active aliases under a single M365 Business Premium tenant.
-> Each domain is fully hardened against spoofing and independently validated.
-> Domain names are anonymized for operational security purposes.
+> The primary domain is fully hardened and independently validated.
+> Secondary and personal-brand domains are in progress -- see `/domains/` for per-domain status.
+> Real domain names and tenant identifiers are intentionally not committed to this repository -- see [SECURITY.md](SECURITY.md).
 
 ---
 
@@ -81,23 +82,24 @@ nextlayersec-email-security/
 |   `-- report-analysis.md          # Reading and acting on aggregate reports
 |
 |-- dns/
+|   |-- dns-setup.md                # Provider-agnostic DNS setup guide
+|   |-- cloudflare-records.md       # Cloudflare-specific record reference
 |   |-- dnssec-deployment.md        # DNSSEC enablement via M365 PowerShell
-|   |-- cloudflare-records.md       # Full DNS record reference
 |   `-- record-templates.md         # Copy-paste DNS record templates
 |
 |-- domains/
 |   |-- _template.md                # Reusable onboarding template
-|   |-- domain-1.md                 # Domain-1 security record
-|   |-- domain-2.md                 # Domain-2 security record
-|   `-- domain-3.md                 # Domain-3 security record
+|   |-- domain-1.md                 # Primary domain security record
+|   |-- domain-2.md                 # Secondary domain security record
+|   `-- domain-3.md                 # Personal-brand domain security record
 |
 |-- exchange-online/
 |   |-- hardening-runbook.md        # Full PowerShell hardening session
 |   `-- baseline-checklist.md       # Verification checklist
 |
 |-- mta-sts/
-|   |-- domain-1.md                 # MTA-STS deployment - domain-1
-|   |-- domain-2.md                 # MTA-STS deployment - domain-2
+|   |-- domain-1.md                 # MTA-STS deployment - primary domain
+|   |-- domain-2.md                 # MTA-STS deployment - secondary domain
 |   `-- deployment-guide.md         # Repeatable deployment framework
 |
 |-- validation/

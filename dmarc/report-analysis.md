@@ -1,7 +1,7 @@
 # DMARC Report Analysis
 
 Guide for reading, interpreting, and acting on DMARC aggregate reports
-across all domains in the NextLayerSec M365 tenant.
+across all domains in the primary M365 tenant.
 
 ---
 
@@ -171,8 +171,8 @@ Only advance DMARC policy when aggregate reports confirm:
 | Domain | RUA Address | Reports Receiving | Last Reviewed |
 |---|---|---|---|
 | `domain-1.io` | dmarc@domain-1.io | Yes | 2026-04-23 |
-| `domain-2.dev` | dmarc@domain-1.io | Yes | 2026-04-23 |
-| `domain-3.com` | dmarc@domain-1.io | Yes | 2026-04-23 |
+| `domain-2.dev` | dmarc@domain-1.io | Yes (consolidated to primary) | 2026-04-23 |
+| `domain-3.com` | — | Pending (pre-migration) | — |
 
 ---
 

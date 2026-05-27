@@ -1,0 +1,18 @@
+config:
+  default: true
+  # MD013 line length — disabled. Tables, DNS records and PowerShell snippets exceed 80 chars by design.
+  MD013: false
+  # MD033 inline HTML — allowed for the README footer alignment div.
+  MD033: false
+  # MD041 first line H1 — disabled because some files start with a comment / metadata line.
+  MD041: false
+  # MD024 duplicate headings — allowed; per-domain sections repeat sub-headings (SPF/DKIM/DMARC).
+  MD024:
+    siblings_only: true
+  # MD036 emphasis as heading — allowed for the README badge row.
+  MD036: false
+globs:
+  - '**/*.md'
+ignores:
+  - 'node_modules/**'
+  - '.git/**'

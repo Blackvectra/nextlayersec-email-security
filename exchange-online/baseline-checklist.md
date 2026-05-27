@@ -76,8 +76,8 @@ Run after initial deployment and quarterly thereafter.
 ## Break Glass Account
 
 - [ ] No authentication policy assigned
-- [ ] Excluded from all Conditional Access policies
-- [ ] No MFA registered
+- [ ] Excluded from Conditional Access policies that could cause lockout
+- [ ] Phishing-resistant MFA registered (FIDO2 key stored offline)
 - [ ] Password stored offline
 - [ ] Sign-in alert active in Entra ID
 - [ ] Reviewed this quarter

@@ -135,16 +135,15 @@ CAA records restrict which Certificate Authorities are authorized to issue
 SSL/TLS certificates for your domain. Without CAA any CA can issue a cert
 for your domain. With CAA only authorized CAs can issue.
 
-### Records deployed on all three domains
-
-Together they close two separate attack paths against your domain identity:
-- Attacker cannot poison your DNS records — DNSSEC
-- Attacker cannot obtain a fraudulent cert for your domain — CAA
 ### Why CAA matters alongside DNSSEC
+
 DNSSEC prevents DNS record tampering. CAA prevents unauthorized certificate issuance.
 Together they close two separate attack paths against your domain identity:
 - Attacker cannot poison your DNS records — DNSSEC
 - Attacker cannot obtain a fraudulent cert for your domain — CAA
+
+> CAA record deployment is tracked under Pending in `changelog.md`.
+> This section documents the planned baseline; records have not yet been published.
 
 ---
 
@@ -156,4 +155,4 @@ and does not affect S/MIME certificate provisioning or signing behavior.
 
 ---
 
-*NextLayerSec -- nextlayersec.io*
+*NextLayerSec*

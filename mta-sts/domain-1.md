@@ -20,7 +20,7 @@ max_age: 604800
 ## DNS Records
 
 ```
-mta-sts.domain-1.io        CNAME    blackvectra.github.io      (DNS-only)
+mta-sts.domain-1.io        CNAME    <github-username>.github.io      (DNS-only)
 _mta-sts.domain-1.io       TXT      "v=STSv1; id=20260416"
 _smtp._tls.domain-1.io     TXT      "v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io"
 ```
@@ -29,7 +29,7 @@ _smtp._tls.domain-1.io     TXT      "v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io"
 
 ## GitHub Pages Configuration
 
-- Repository: `nextlayersec-mta-sts`
+- Repository: dedicated MTA-STS hosting repo
 - Branch: `main`
 - Custom domain: `mta-sts.domain-1.io`
 - `.nojekyll` file: present

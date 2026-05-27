@@ -1,7 +1,7 @@
 # DKIM Key Rotation
 
 Key rotation procedure for DKIM selectors across all domains
-in the NextLayerSec M365 tenant.
+in the primary M365 tenant.
 
 ---
 
@@ -86,8 +86,9 @@ Verify it matches the selector you rotated to.
 | Domain | Date | Previous Selector | New Selector | Performed By |
 |---|---|---|---|---|
 | domain-1.io | 2026-04-18 | selector2 | selector1 | Initial deployment |
-| domain-2.dev | 2026-04-18 | selector2 | selector1 | Initial deployment |
-| domain-3.com | 2026-04-23 | selector2 | selector1 | Initial deployment |
+
+> Secondary and personal-brand domains will be added to this log after DKIM
+> signing is enabled — see `/domains/` for per-domain deployment status.
 
 ---
 

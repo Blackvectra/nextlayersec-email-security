@@ -5,18 +5,58 @@ This file serves as the audit trail for domain security deployments and configur
 
 ---
 
-## 2026-04-23 -- Full Stack Complete
+## 2026-05-27 -- Documentation hardening pass
 
-### All Domains — domain-1.io, domain-2.dev, domain-3.com
-- Full email security stack validated and equal across all three domains
+### Security guidance corrections
+- Break-glass account guidance updated: replaced "No MFA registered" with
+  phishing-resistant MFA (FIDO2 key stored offline) and narrowed the
+  Conditional Access exclusion to policies that could cause lockout
+  (`exchange-online/hardening-runbook.md`, `baseline-checklist.md`).
+- DKIM CNAME format error corrected: `microsoft.com` -> `<tenant>.onmicrosoft.com`
+  in `dns/cloudflare-records.md` and `dkim/selector-management.md`.
+
+### OSINT redaction
+- Real domain names, tenant identifiers and GitHub usernames removed from all
+  operational docs. Domain files renamed from `<real-name>.md` to
+  `domain-1/2/3.md`. Redaction policy documented in new `SECURITY.md`.
+- Stale status tables in DKIM and DMARC docs reconciled with per-domain
+  reality (only primary domain fully deployed).
+
+### Repo cleanup
+- Duplicated CAA section in `dmarc/monitoring-setup.md` removed.
+- README repo-structure tree updated to match on-disk filenames.
+- README domain-coverage table updated to reflect actual deployment status.
+
+### New content
+- `dns/dns-setup.md` -- provider-agnostic DNS setup guide. Cloudflare-specific
+  notes consolidated into `dns/cloudflare-records.md`.
+- `SECURITY.md` -- responsible disclosure and OSINT redaction policy.
+- CI workflow (`.github/workflows/docs.yml`) -- markdownlint, lychee link
+  check, TruffleHog secret scan, and a custom OSINT-redaction check that
+  fails the build if real operational identifiers reappear in docs.
+
+---
+
+## 2026-04-23 -- Primary Domain Full Stack Complete
+
+### domain-1.io (primary)
+- Full email security stack validated end-to-end
 - SPF — PASS
 - DKIM — configured and signing
 - DMARC — `p=reject` enforced
 - MTA-STS — `enforce` mode, validated
 - DNSSEC — enabled and validated
-- DNSSEC-aware MX — `p-v1.mx.microsoft` endpoint active on all domains
+- DNSSEC-aware MX — `p-v1.mx.microsoft` endpoint active
 - TLS-RPT — configured and reporting
-- S/MIME — signing enabled on primary domain, applied across tenant
+- S/MIME — signing enabled on primary mailbox
+
+### domain-2.dev (secondary)
+- SPF deployed, DMARC at `p=reject` with reporting consolidated to primary
+- MX, DKIM, MTA-STS, DNSSEC, TLS-RPT still pending -- see `/domains/domain-2.md`
+
+### domain-3.com (personal brand)
+- Still on iCloud -- migration to M365 tenant pending
+- See `/domains/domain-3.md` for migration plan
 
 ---
 

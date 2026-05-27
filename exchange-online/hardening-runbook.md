@@ -70,7 +70,8 @@ Get-AuthenticationPolicy -Identity "YourPolicyName" | Format-List Name, AllowBas
 Get-User -ResultSize Unlimited | Format-List DisplayName, AuthenticationPolicy, UserPrincipalName
 ```
 
-> If backtick line continuation fails, run as single line with colon syntax on $false.
+> If backtick line continuation fails in your console, run as a single line.
+> Switch parameters take the colon form `-AllowBasicAuthImap:$false` (note the colon, no space).
 
 ---
 
@@ -243,8 +244,8 @@ Get-User -Identity breakglass@yourdomain.com | Format-List DisplayName, Authenti
 
 Break glass account requirements:
 - No authentication policy assigned
-- Excluded from all Conditional Access policies in Entra ID
-- No MFA registered
+- Excluded from Conditional Access policies that could lock the account out (e.g. device compliance, location restrictions)
+- Phishing-resistant MFA registered (FIDO2 security key stored offline in a sealed envelope or safe) — never leave a privileged account password-only
 - Long complex password stored offline — not in a password manager
 - Sign-in alert configured in Entra ID monitoring
 - Reviewed quarterly

@@ -1,0 +1,79 @@
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  markdownlint:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+
+  linkcheck:
+    name: Link check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --no-progress
+            --max-concurrency 8
+            --timeout 20
+            --retry-wait-time 5
+            --max-retries 2
+            --accept 200,206,429
+            --exclude-path validation
+            --exclude '^https?://(domain-[0-9]+|<.+>)'
+            './**/*.md'
+          fail: true
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --only-verified
+
+  osint-check:
+    name: OSINT redaction check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on un-redacted operational identifiers
+        run: |
+          set -e
+          # The README footer and header badges intentionally use the brand URL;
+          # exclude them and SECURITY.md (which documents the redaction policy).
+          patterns=(
+            'mattlevorson'
+            'Nextlayersec665'
+            'blackvectra\.github\.io'
+          )
+          fail=0
+          for p in "${patterns[@]}"; do
+            if grep -rIn --include='*.md' --exclude-dir='.git' \
+              --exclude='SECURITY.md' -E "$p" .; then
+              echo "::error::Pattern '$p' must not appear in docs -- see SECURITY.md"
+              fail=1
+            fi
+          done
+          exit $fail
