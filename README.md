@@ -26,6 +26,49 @@ and M365 tenant configuration. Screenshots of all validation outputs are availab
 
 ---
 
+## Quickstart
+
+The fastest path to a hardened domain. Each step links to the full
+walkthrough -- the snippet here is the 10-minute version.
+
+1. **Publish SPF, DMARC monitor, MX** -- see [`dns/dns-setup.md`](dns/dns-setup.md)
+   ```
+   @       TXT    "v=spf1 include:spf.protection.outlook.com -all"
+   _dmarc  TXT    "v=DMARC1; p=none; rua=mailto:dmarc@<domain>"
+   @       MX     <domain-hyphens>.mail.protection.outlook.com  pri 0
+   ```
+2. **Enable DKIM** in Defender, publish the two CNAMEs -- see [`dkim/selector-management.md`](dkim/selector-management.md)
+3. **Watch DMARC reports** for 2-4 weeks, then tighten to `p=reject` -- see [`dmarc/monitoring-setup.md`](dmarc/monitoring-setup.md)
+4. **Deploy MTA-STS** on GitHub Pages -- see [`mta-sts/deployment-guide.md`](mta-sts/deployment-guide.md)
+5. **Enable DNSSEC** at the DNS provider and in Exchange Online; swap MX to `p-v1.mx.microsoft` -- see [`dns/dnssec-deployment.md`](dns/dnssec-deployment.md)
+6. **Run the Exchange Online hardening baseline** -- see [`exchange-online/hardening-runbook.md`](exchange-online/hardening-runbook.md)
+7. **Deploy Conditional Access** policies for MFA + legacy-auth block -- see [`conditional-access/policies.md`](conditional-access/policies.md)
+
+For alias domains under an already-hardened tenant the abbreviated playbook
+is in [`domains/alias-quickstart.md`](domains/alias-quickstart.md).
+
+---
+
+## Mail Flow
+
+```mermaid
+flowchart LR
+    SENDER([External sender]) -->|SMTP| RESOLVER{DNS resolver}
+    RESOLVER -->|DNSSEC-validated MX| MX[domain-1-io.p-v1.mx.microsoft]
+    RESOLVER -->|MTA-STS policy| POLICY[(mta-sts.txt over HTTPS)]
+    POLICY -->|MX must match, TLS required| SENDER
+    MX -->|TLS-encrypted| EOP[EOP / Defender for O365]
+    EOP -->|SPF + DKIM + DMARC| AUTH{Auth aligned?}
+    AUTH -->|Pass| FILTER[Safe Links / Safe Attachments / Anti-phish]
+    AUTH -->|Fail| QUARANTINE[(Quarantine)]
+    FILTER -->|Clean| INBOX[Mailbox]
+    FILTER -->|Detected| QUARANTINE
+    INBOX -->|TLS failure| TLSRPT[(TLS-RPT report)]
+    INBOX -->|Daily aggregate| RUA[(DMARC report mailbox)]
+```
+
+---
+
 ## The Stack
 
 | Layer | Control | Purpose |
@@ -33,12 +76,17 @@ and M365 tenant configuration. Screenshots of all validation outputs are availab
 | Sender Authentication | SPF | Authorizes sending sources for the domain |
 | Message Integrity | DKIM | Cryptographic signature on every outbound message |
 | Policy Enforcement | DMARC | Enforces SPF/DKIM alignment, enables aggregate reporting |
+| Forwarder Trust | ARC | Preserves auth results across mailing lists / forwarders |
 | Transport Security | MTA-STS | Forces TLS on inbound SMTP, prevents downgrade attacks |
 | DNS Integrity | DNSSEC | Cryptographically signs DNS records, prevents cache poisoning |
 | Receive Hardening | DNSSEC-aware MX | M365 DNSSEC-validated inbound endpoint |
+| Cert Issuance Control | CAA | Restricts which CAs can issue certs for the domain |
+| Brand Display | BIMI | Publishes brand logo alongside authenticated mail |
 | Failure Visibility | TLS-RPT | Reports TLS failures on inbound mail delivery |
+| Identity & Access | Conditional Access | Gates sign-ins by MFA, device compliance, risk, location |
+| Content Inspection | Defender for O365 | Safe Links, Safe Attachments, anti-phish, ZAP |
 
-### Why all seven matter
+### Why each matters
 
 Each control closes a gap the others cannot:
 
@@ -47,8 +95,10 @@ Each control closes a gap the others cannot:
 - **DMARC alone** -- doesn't protect SMTP transit after DNS resolution
 - **MTA-STS alone** -- cached policy can be stale, doesn't protect the DNS layer
 - **DNSSEC alone** -- doesn't enforce TLS on delivery, doesn't authenticate sender
+- **CAA alone** -- prevents fraudulent certs but not DNS tampering (pair with DNSSEC)
+- **CA + MFA alone** -- protects sign-in but not the content of delivered mail
 
-The full stack is required for complete inbound mail path hardening.
+The full stack is required end-to-end.
 
 ---
 
@@ -67,10 +117,48 @@ The full stack is required for complete inbound mail path hardening.
 
 ---
 
+## Documentation Map
+
+| Topic | File |
+|---|---|
+| **Get started** | [`dns/dns-setup.md`](dns/dns-setup.md) -- provider-agnostic walkthrough |
+| **Cloudflare specifics** | [`dns/cloudflare-records.md`](dns/cloudflare-records.md) |
+| **DKIM** | [`dkim/selector-management.md`](dkim/selector-management.md) -> [`key-rotation.md`](dkim/key-rotation.md) -> [`validation.md`](dkim/validation.md) |
+| **DMARC** | [`dmarc/monitoring-setup.md`](dmarc/monitoring-setup.md) -> [`report-analysis.md`](dmarc/report-analysis.md) -> [`arc.md`](dmarc/arc.md) |
+| **MTA-STS** | [`mta-sts/deployment-guide.md`](mta-sts/deployment-guide.md) + per-domain configs |
+| **DNSSEC** | [`dns/dnssec-deployment.md`](dns/dnssec-deployment.md) |
+| **CAA** | [`dns/caa-records.md`](dns/caa-records.md) |
+| **BIMI** | [`bimi/deployment.md`](bimi/deployment.md) |
+| **Exchange Online hardening** | [`exchange-online/hardening-runbook.md`](exchange-online/hardening-runbook.md) + [`baseline-checklist.md`](exchange-online/baseline-checklist.md) |
+| **Conditional Access** | [`conditional-access/policies.md`](conditional-access/policies.md) |
+| **Defender for O365 tuning** | [`defender/tuning.md`](defender/tuning.md) |
+| **Tenant Allow/Block List** | [`defender/tenant-allow-block.md`](defender/tenant-allow-block.md) |
+| **User phish reporting** | [`defender/user-reporting.md`](defender/user-reporting.md) |
+| **Incident response** | [`incident-response/runbook.md`](incident-response/runbook.md) |
+| **Per-domain status** | [`domains/`](domains/) (one file per domain) |
+| **Alias domain quickstart** | [`domains/alias-quickstart.md`](domains/alias-quickstart.md) |
+| **Glossary** | [`GLOSSARY.md`](GLOSSARY.md) |
+| **Contributing** | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
+| **Security policy** | [`SECURITY.md`](SECURITY.md) |
+| **Change log** | [`changelog.md`](changelog.md) |
+
+---
+
 ## Repository Structure
 
 ```
 nextlayersec-email-security/
+|
+|-- bimi/
+|   `-- deployment.md               # BIMI logo + DNS deployment
+|
+|-- conditional-access/
+|   `-- policies.md                 # Entra ID CA policy baseline
+|
+|-- defender/
+|   |-- tuning.md                   # Safe Links / Safe Attachments / anti-phish tuning
+|   |-- tenant-allow-block.md       # Manual IOC / exception list
+|   `-- user-reporting.md           # End-user phish reporting workflow
 |
 |-- dkim/
 |   |-- selector-management.md      # Selector configuration and DNS records
@@ -79,16 +167,19 @@ nextlayersec-email-security/
 |
 |-- dmarc/
 |   |-- monitoring-setup.md         # DMARC aggregate reporting setup
-|   `-- report-analysis.md          # Reading and acting on aggregate reports
+|   |-- report-analysis.md          # Reading and acting on aggregate reports
+|   `-- arc.md                      # ARC (Authenticated Received Chain) overview
 |
 |-- dns/
 |   |-- dns-setup.md                # Provider-agnostic DNS setup guide
 |   |-- cloudflare-records.md       # Cloudflare-specific record reference
 |   |-- dnssec-deployment.md        # DNSSEC enablement via M365 PowerShell
+|   |-- caa-records.md              # CAA record deployment
 |   `-- record-templates.md         # Copy-paste DNS record templates
 |
 |-- domains/
 |   |-- _template.md                # Reusable onboarding template
+|   |-- alias-quickstart.md         # 30-min alias domain playbook
 |   |-- domain-1.md                 # Primary domain security record
 |   |-- domain-2.md                 # Secondary domain security record
 |   `-- domain-3.md                 # Personal-brand domain security record
@@ -96,6 +187,9 @@ nextlayersec-email-security/
 |-- exchange-online/
 |   |-- hardening-runbook.md        # Full PowerShell hardening session
 |   `-- baseline-checklist.md       # Verification checklist
+|
+|-- incident-response/
+|   `-- runbook.md                  # IR playbooks for the common email incidents
 |
 |-- mta-sts/
 |   |-- domain-1.md                 # MTA-STS deployment - primary domain
@@ -107,7 +201,14 @@ nextlayersec-email-security/
 |   |-- verisign-dnssec.png         # Verisign DNSSEC chain validation
 |   `-- powershell-dnssec.png       # Exchange Online PowerShell output
 |
+|-- .github/workflows/docs.yml      # CI: markdownlint, link check, secret scan, OSINT check
+|-- .markdownlint-cli2.yaml
+|-- .lycheeignore
+|-- CONTRIBUTING.md
+|-- GLOSSARY.md
+|-- LICENSE
 |-- README.md
+|-- SECURITY.md
 `-- changelog.md
 ```
 
@@ -143,7 +244,7 @@ Sending MTA                DNS                    Policy Host             Receiv
 ```
 version: STSv1
 mode: enforce
-mx: nextlayersec-io.p-v1.mx.microsoft
+mx: domain-1-io.p-v1.mx.microsoft
 max_age: 604800
 ```
 

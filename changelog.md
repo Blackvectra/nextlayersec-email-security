@@ -5,6 +5,34 @@ This file serves as the audit trail for domain security deployments and configur
 
 ---
 
+## 2026-05-27 -- Framework expansion: BIMI, CAA, CA, IR, Defender, ARC
+
+### New chapters
+- `bimi/deployment.md` -- BIMI deployment, VMC vs CMC, SVG P/S requirements, validation
+- `dns/caa-records.md` -- CAA record deployment, recommended baseline, CA cheat sheet
+- `conditional-access/policies.md` -- seven-policy Entra ID CA baseline (block legacy auth, require MFA, mobile compliance, country block, risky sign-in, unmanaged browser, admin phishing-resistant MFA)
+- `incident-response/runbook.md` -- seven playbooks (compromised mailbox, DMARC spoof spike, MTA-STS false positive, DKIM key compromise, DNSSEC failure, mass phish, legacy auth attempts)
+- `defender/tuning.md` -- Safe Attachments / Safe Links / Anti-phish / Anti-spam / Outbound spam / Quarantine tuning
+- `defender/tenant-allow-block.md` -- TABL management with quarterly audit pattern
+- `defender/user-reporting.md` -- end-user phish reporting workflow and triage
+- `dmarc/arc.md` -- ARC overview, trusted-sealer config, verification
+- `domains/alias-quickstart.md` -- 30-min alias domain playbook
+- `GLOSSARY.md` -- acronym + concept reference
+- `CONTRIBUTING.md` -- contribution + redaction guidance
+
+### README updates
+- Quickstart section: 10-minute path through the stack
+- Mermaid mail-flow diagram
+- Stack table expanded with ARC, BIMI, CAA, Conditional Access, Defender for O365
+- Documentation Map for navigation
+- Repo structure tree refreshed
+
+### Pending status
+- CAA records now documented; deployment still pending per-domain
+- BIMI now documented; deployment pending VMC acquisition decision
+
+---
+
 ## 2026-05-27 -- Documentation hardening pass
 
 ### Security guidance corrections
@@ -101,8 +129,12 @@ This file serves as the audit trail for domain security deployments and configur
 
 ## Pending
 
-- [ ] All domains -- CAA record deployment
-- [ ] All domains -- BIMI configuration (post-CAA deployment)
+- [ ] All domains -- CAA record deployment (docs ready: `dns/caa-records.md`)
+- [ ] Primary domain -- BIMI deployment (docs ready: `bimi/deployment.md`; pending VMC acquisition)
+- [ ] Conditional Access policies -- staged rollout in Report-only (docs ready: `conditional-access/policies.md`)
+- [ ] Defender tuning -- adopt baseline from `defender/tuning.md`
+- [ ] Domain-2.dev -- complete the auth stack per `domains/domain-2.md`
+- [ ] Domain-3.com -- migration to M365 tenant
 
 ---
 
