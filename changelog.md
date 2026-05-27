@@ -5,18 +5,26 @@ This file serves as the audit trail for domain security deployments and configur
 
 ---
 
-## 2026-04-23 -- Full Stack Complete
+## 2026-04-23 -- Primary Domain Full Stack Complete
 
-### All Domains — domain-1.io, domain-2.dev, domain-3.com
-- Full email security stack validated and equal across all three domains
+### domain-1.io (primary)
+- Full email security stack validated end-to-end
 - SPF — PASS
 - DKIM — configured and signing
 - DMARC — `p=reject` enforced
 - MTA-STS — `enforce` mode, validated
 - DNSSEC — enabled and validated
-- DNSSEC-aware MX — `p-v1.mx.microsoft` endpoint active on all domains
+- DNSSEC-aware MX — `p-v1.mx.microsoft` endpoint active
 - TLS-RPT — configured and reporting
-- S/MIME — signing enabled on primary domain, applied across tenant
+- S/MIME — signing enabled on primary mailbox
+
+### domain-2.dev (secondary)
+- SPF deployed, DMARC at `p=reject` with reporting consolidated to primary
+- MX, DKIM, MTA-STS, DNSSEC, TLS-RPT still pending -- see `/domains/nextlayersec-dev.md`
+
+### domain-3.com (personal brand)
+- Still on iCloud -- migration to M365 tenant pending
+- See `/domains/mattlevorson-com.md` for migration plan
 
 ---
 
