@@ -349,6 +349,58 @@ nslookup -type=DS yourdomain.com
 
 ---
 
+## CAA -- Certificate Authority Authorization
+
+DNSSEC prevents DNS tampering. CAA prevents fraudulent certificate issuance.
+Together they close two separate attack paths against your domain identity:
+without CAA, any public CA can issue a cert for your domain, so a single
+rogue or compromised CA is enough to break TLS even if your DNS is sound.
+
+CAA records (RFC 8659) list the CAs you authorize to issue certs. All major
+public CAs are required to honor CAA at issuance time.
+
+### Recommended baseline
+
+```
+@    CAA    0 issue "letsencrypt.org"
+@    CAA    0 issue "pki.goog"
+@    CAA    0 issue "digicert.com"
+@    CAA    0 issuewild "letsencrypt.org"
+@    CAA    0 issuewild "pki.goog"
+@    CAA    0 issuewild "digicert.com"
+@    CAA    0 iodef "mailto:admin@<domain>"
+```
+
+| Tag | Purpose |
+|---|---|
+| `issue` | Authorizes a CA to issue regular certs |
+| `issuewild` | Authorizes a CA to issue wildcard certs (separate from `issue`) |
+| `iodef` | Email address that receives reports of failed issuance attempts |
+
+Trim the list to only CAs you actually use. The smaller the authorization
+set, the smaller the attack surface.
+
+### Validation
+
+```bash
+dig +short CAA <domain>
+```
+
+External validators:
+- <https://caatest.co.uk/>
+- <https://sslmate.com/caa/>
+- MXToolbox CAA Lookup
+
+### Why this matters alongside DNSSEC
+
+DNSSEC stops an attacker from forging your DNS records.
+CAA stops an attacker who obtained a fraudulent cert from passing TLS validation.
+Deploy together -- CAA without DNSSEC can itself be stripped by a DNS attacker.
+
+Full reference: [`dns/caa-records.md`](dns/caa-records.md).
+
+---
+
 ## Alias Domain Hardening
 
 Alias domains that share mail flow with a primary domain are still active spoofing
