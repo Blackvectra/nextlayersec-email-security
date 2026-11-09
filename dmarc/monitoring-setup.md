@@ -9,7 +9,7 @@ under the primary M365 tenant.
 
 All three domains send DMARC aggregate reports to a single destination:
 
-```
+```text
 rua=mailto:dmarc@domain-1.io
 ```
 
@@ -20,17 +20,20 @@ This consolidates reporting across all domains into one inbox for unified visibi
 ## DMARC Records
 
 ### domain-1.io
-```
+
+```text
 v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
 ### domain-2.dev
-```
+
+```text
 v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
 ### domain-3.com
-```
+
+```text
 v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 ```
 
@@ -66,15 +69,18 @@ Use DMARCian or similar tool to parse and visualize.
 ### What to look for
 
 **Legitimate sources failing DMARC:**
+
 - SPF fail + DKIM fail from your own sending IPs = SPF misconfiguration
 - SPF pass + DKIM fail = forwarding issue or DKIM key problem
 - SPF fail + DKIM pass = authorized sender not in SPF record
 
 **Spoofing attempts:**
+
 - Unknown source IPs with high message counts
 - Sources you don't recognize passing or failing
 
 **Expected sources:**
+
 - M365 outbound IPs (Microsoft) -- should always pass
 - Any third-party senders (newsletters, CRMs) -- verify they're authorized
 
@@ -84,7 +90,7 @@ Use DMARCian or similar tool to parse and visualize.
 
 For new domains or after significant changes:
 
-```
+```text
 Week 1-2:  p=none       -- monitoring only, no enforcement
 Week 3-4:  p=none       -- continue monitoring, verify no legitimate failures
 Month 2:   p=quarantine -- failed mail goes to spam
@@ -113,16 +119,18 @@ show failures that would cause delivery rejection in `enforce` mode.
 
 All three domains send TLS-RPT reports to:
 
-```
+```text
 rua=mailto:tlsrpt@domain-1.io
 ```
 
 ### What triggers a TLS-RPT report
+
 - Sending MTA cannot establish STARTTLS to your MX
 - TLS certificate validation failure on your MX
 - MTA-STS policy mismatch (wrong MX in policy file)
 
 ### Before flipping MTA-STS to enforce
+
 - Review TLS-RPT reports for 2+ weeks in testing mode
 - Zero failures = safe to enforce
 - Any failures = investigate before enforcing
@@ -139,6 +147,7 @@ for your domain. With CAA only authorized CAs can issue.
 
 DNSSEC prevents DNS record tampering. CAA prevents unauthorized certificate issuance.
 Together they close two separate attack paths against your domain identity:
+
 - Attacker cannot poison your DNS records — DNSSEC
 - Attacker cannot obtain a fraudulent cert for your domain — CAA
 

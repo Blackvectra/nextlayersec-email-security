@@ -22,6 +22,7 @@ Primary domain. Full stack deployed and enforced.
 ## Deployment Notes
 
 ### MTA-STS
+
 - Hosted via GitHub Pages (dedicated MTA-STS repository)
 - Policy URL: `https://mta-sts.domain-1.io/.well-known/mta-sts.txt`
 - CNAME: `mta-sts.domain-1.io` -> `<github-username>.github.io` (DNS-only)
@@ -29,6 +30,7 @@ Primary domain. Full stack deployed and enforced.
 - Deployed: 2026-04-18
 
 ### DNSSEC
+
 - Enabled in Cloudflare zone
 - DS record: published via registrar
 - Chain validated: Verisign DNSSEC Analyzer -- all green

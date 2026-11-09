@@ -5,6 +5,7 @@ Cloudflare-specific notes (proxy behavior, dashboard paths) see
 [`cloudflare-records.md`](cloudflare-records.md).
 
 This guide assumes:
+
 - M365 Business Premium tenant (or equivalent Exchange Online plan)
 - Domain verified in M365 as an accepted domain
 - Access to your DNS provider's zone management
@@ -51,7 +52,7 @@ does (Cloudflare is free) before continuing.
 
 ## Step 1 -- MX
 
-```
+```text
 Type:     MX
 Name:     @
 Value:    <domain-with-hyphens>.mail.protection.outlook.com
@@ -68,13 +69,14 @@ Verify with `nslookup -type=MX <domain>` before continuing.
 
 ## Step 2 -- SPF
 
-```
+```text
 Type:  TXT
 Name:  @
 Value: v=spf1 include:spf.protection.outlook.com -all
 ```
 
 Common pitfalls:
+
 - Duplicate SPF records — RFC 7208 allows only one TXT starting with `v=spf1`. Merge if there are multiple senders.
 - 10-lookup limit — each `include:` counts. Use SPF flattening if you exceed it.
 - Soft fail (`~all`) vs hard fail (`-all`) — use `-all` once you are confident in the included senders.
@@ -86,7 +88,7 @@ Common pitfalls:
 CNAMEs must be live in DNS **before** enabling signing in the Defender portal,
 otherwise enablement fails with a DNS lookup error.
 
-```
+```text
 Type:  CNAME
 Name:  selector1._domainkey
 Value: selector1-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
@@ -109,13 +111,14 @@ Verify by checking message headers for `DKIM-Signature` and `dkim=pass`.
 
 ## Step 4 -- DMARC
 
-```
+```text
 Type:  TXT
 Name:  _dmarc
 Value: v=DMARC1; p=none; rua=mailto:dmarc@<domain>
 ```
 
 Progression:
+
 - Start at `p=none`
 - Review aggregate reports for 2-4 weeks
 - Advance to `p=quarantine` when no legitimate sources fail
@@ -139,9 +142,9 @@ This step depends on your provider. See the capability matrix above.
 5. Verify the chain: `https://dnssec-analyzer.verisignlabs.com/<domain>` — all green.
 6. Enable in Exchange Online:
 
-```powershell
-Enable-DnssecForVerifiedDomain -DomainName <domain>
-```
+   ```powershell
+   Enable-DnssecForVerifiedDomain -DomainName <domain>
+   ```
 
 7. Note the `MxValue` from the output. Update MX to the new endpoint
    (`<domain-with-hyphens>.p-v1.mx.microsoft`) **and** update the MTA-STS
@@ -158,7 +161,7 @@ simplest free option. See [`/mta-sts/deployment-guide.md`](../mta-sts/deployment
 
 DNS side:
 
-```
+```text
 Type:   CNAME
 Name:   mta-sts
 Value:  <github-username>.github.io
@@ -178,7 +181,7 @@ explicitly.
 
 ## Step 7 -- TLS-RPT
 
-```
+```text
 Type:  TXT
 Name:  _smtp._tls
 Value: v=TLSRPTv1; rua=mailto:tlsrpt@<domain>
@@ -192,7 +195,7 @@ MTA-STS from `testing` to `enforce`.
 
 ## Optional -- CAA
 
-```
+```text
 Type:  CAA
 Name:  @
 Value: 0 issue "pki.goog"
@@ -240,6 +243,7 @@ dig +dnssec +short MX <domain>
 ```
 
 External validators:
+
 - MTA-STS: `https://mxtoolbox.com/SuperTool.aspx` (MTA-STS Lookup)
 - DNSSEC: `https://dnssec-analyzer.verisignlabs.com/<domain>`
 - Full stack: `https://internet.nl/mail/`

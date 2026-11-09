@@ -57,6 +57,7 @@ M365 does not enforce automatic rotation on a defined cadence.
 Manual rotation should be performed on a documented schedule.
 
 Recommended process:
+
 1. Note current active selector before rotation
 2. Run `Rotate-DkimSigningConfig`
 3. Verify new selector is active via `Get-DkimSigningConfig`
@@ -71,7 +72,7 @@ Recommended process:
 After rotation send a test message and inspect headers.
 Look for:
 
-```
+```text
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yourdomain.com;
   s=selector2; ...
 ```

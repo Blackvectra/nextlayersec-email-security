@@ -13,7 +13,7 @@ Templates use placeholder values — substitute `<domain>`, `<tenant>`, and
 
 ### MX
 
-```
+```text
 Type:     MX
 Name:     @
 Value:    domain-1-io.p-v1.mx.microsoft
@@ -22,7 +22,7 @@ Priority: 0
 
 ### SPF
 
-```
+```text
 Type:  TXT
 Name:  @
 Value: v=spf1 include:spf.protection.outlook.com -all
@@ -33,7 +33,7 @@ Value: v=spf1 include:spf.protection.outlook.com -all
 Published automatically by M365 as CNAMEs. Enable in Defender portal first,
 then publish the two CNAME records provided:
 
-```
+```text
 Type:  CNAME
 Name:  selector1._domainkey
 Value: selector1-domain-1-io._domainkey.<tenant>.onmicrosoft.com
@@ -45,7 +45,7 @@ Value: selector2-domain-1-io._domainkey.<tenant>.onmicrosoft.com
 
 ### DMARC
 
-```
+```text
 Type:  TXT
 Name:  _dmarc
 Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
@@ -53,7 +53,7 @@ Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 
 ### MTA-STS
 
-```
+```text
 Type:   CNAME
 Name:   mta-sts
 Value:  <github-username>.github.io
@@ -70,7 +70,7 @@ Value:  v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io
 
 ### Autodiscover
 
-```
+```text
 Type:  CNAME
 Name:  autodiscover
 Value: autodiscover.outlook.com
@@ -86,7 +86,7 @@ for the domain. Switch to the `p-v1.mx.microsoft` endpoint after running
 
 ### MX
 
-```
+```text
 Type:     MX
 Name:     @
 Value:    domain-2-dev.mail.protection.outlook.com
@@ -97,7 +97,7 @@ Priority: 0
 
 ### SPF
 
-```
+```text
 Type:  TXT
 Name:  @
 Value: v=spf1 include:spf.protection.outlook.com -all
@@ -105,7 +105,7 @@ Value: v=spf1 include:spf.protection.outlook.com -all
 
 ### DKIM
 
-```
+```text
 Type:  CNAME
 Name:  selector1._domainkey
 Value: selector1-domain-2-dev._domainkey.<tenant>.onmicrosoft.com
@@ -117,7 +117,7 @@ Value: selector2-domain-2-dev._domainkey.<tenant>.onmicrosoft.com
 
 ### DMARC
 
-```
+```text
 Type:  TXT
 Name:  _dmarc
 Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
@@ -128,7 +128,7 @@ Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 
 ### MTA-STS
 
-```
+```text
 Type:   CNAME
 Name:   mta-sts
 Value:  <github-username>.github.io
@@ -152,7 +152,7 @@ that is migrating into the primary M365 tenant.
 
 ### MX
 
-```
+```text
 Type:     MX
 Name:     @
 Value:    domain-3-com.mail.protection.outlook.com
@@ -163,7 +163,7 @@ Priority: 0
 
 ### SPF
 
-```
+```text
 Type:  TXT
 Name:  @
 Value: v=spf1 include:spf.protection.outlook.com -all
@@ -171,7 +171,7 @@ Value: v=spf1 include:spf.protection.outlook.com -all
 
 ### DKIM
 
-```
+```text
 Type:  CNAME
 Name:  selector1._domainkey
 Value: selector1-domain-3-com._domainkey.<tenant>.onmicrosoft.com
@@ -183,7 +183,7 @@ Value: selector2-domain-3-com._domainkey.<tenant>.onmicrosoft.com
 
 ### DMARC
 
-```
+```text
 Type:  TXT
 Name:  _dmarc
 Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
@@ -191,7 +191,7 @@ Value: v=DMARC1; p=reject; rua=mailto:dmarc@domain-1.io
 
 ### MTA-STS
 
-```
+```text
 Type:   CNAME
 Name:   mta-sts
 Value:  <github-username>.github.io

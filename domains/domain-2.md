@@ -36,13 +36,16 @@ Secondary brand domain. Added to primary M365 tenant as alias domain. Auth stack
 ## Deployment Notes
 
 ### Domain Role
+
 Alias domain -- mail sent to `@domain-2.dev` delivers to the primary inbox.
 No separate mailbox or license required.
 
 ### DNS Provider
+
 Cloudflare -- proxy must be disabled (grey cloud) on MTA-STS CNAME.
 
 ### DNSSEC Status
+
 DNSSEC chain validated as signed via Verisign analyzer.
 M365 enablement pending MTA-STS deployment.
 

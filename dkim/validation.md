@@ -38,7 +38,7 @@ Send a test message to a Gmail or Outlook.com address.
 In Gmail: open message -> three dots -> Show original.
 Look for:
 
-```
+```text
 Authentication-Results: mx.google.com;
   dkim=pass header.i=@yourdomain.com header.s=selector1
 ```

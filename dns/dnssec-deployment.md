@@ -16,7 +16,7 @@ and is rejected before reaching the sending MTA.
 
 ### Attack scenario without DNSSEC
 
-```
+```text
 Client sends email to user@yourdomain.com
     |
     v
@@ -34,7 +34,7 @@ No delivery failure -- attack is silent
 
 ### With DNSSEC enabled
 
-```
+```text
 Client sends email to user@yourdomain.com
     |
     v
@@ -86,17 +86,19 @@ GoDaddy handles both zone signing and DS record publication automatically.
 
 Before enabling in M365, verify the full chain of trust is valid:
 
-```
+```text
 https://dnssec-analyzer.verisignlabs.com/<yourdomain>
 ```
 
 All entries should be green. Common failure points:
+
 - DS record not yet propagated at registrar
 - Zone signing enabled but DS record not published
 - Algorithm mismatch between zone and DS record
 
 Also verify via nslookup:
-```
+
+```powershell
 nslookup -type=DS yourdomain.com
 ```
 
@@ -118,7 +120,8 @@ Enable-DnssecForVerifiedDomain -DomainName yourdomain.com
 ```
 
 Expected output:
-```
+
+```text
 Domain    : yourdomain.com
 MxValue   : yourdomain-com.p-v1.mx.microsoft
 Region    :
@@ -137,7 +140,7 @@ After enabling, three records must be updated simultaneously:
 
 ### 1. MX record in Cloudflare/GoDaddy
 
-```
+```text
 Type:     MX
 Name:     @
 Value:    <MxValue from PowerShell output>
@@ -148,7 +151,7 @@ Priority: 0
 
 Update the `mx:` value to match the new endpoint:
 
-```
+```text
 version: STSv1
 mode: enforce
 mx: <MxValue from PowerShell output>
@@ -157,7 +160,7 @@ max_age: 604800
 
 ### 3. `_mta-sts` TXT record -- bump the id
 
-```
+```text
 Type:  TXT
 Name:  _mta-sts
 Value: v=STSv1; id=<new date YYYYMMDD>
@@ -209,4 +212,5 @@ Also validate via MXToolbox and Verisign after DNS propagates (allow 5-10 minute
 - RFC 4033 -- DNS Security Introduction and Requirements
 - RFC 4034 -- Resource Records for DNS Security Extensions
 - RFC 4035 -- Protocol Modifications for DNS Security Extensions
-- [Microsoft DNSSEC for Exchange Online](https://learn.microsoft.com/en-us/microsoft-365/security/office-365-security/email-authentication-dnssec)
+- [Microsoft: inbound SMTP DANE with DNSSEC for Exchange Online](https://learn.microsoft.com/en-us/exchange/security-and-compliance/how-dane-secures-email#inbound-smtp-dane-with-dnssec)
+- [Enable-DnssecForVerifiedDomain cmdlet reference](https://learn.microsoft.com/en-us/powershell/module/exchangepowershell/enable-dnssecforverifieddomain)
