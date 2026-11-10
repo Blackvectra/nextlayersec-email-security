@@ -39,7 +39,7 @@ jobs:
         with:
           persist-credentials: false
       # Rules and the reason for each disabled one live in .markdownlint-cli2.yaml.
-      - uses: DavidAnson/markdownlint-cli2-action@913db5cf77ef624b914090bad9e1615f7f6e099d # v25.0.0
+      - uses: DavidAnson/markdownlint-cli2-action@696eb3f2509270d7b882d2aa68347bc676e7af34 # v25.0.0
         with:
           globs: '**/*.md'
 
@@ -84,7 +84,7 @@ jobs:
           # TruffleHog scans git history; fetch all commits, not just the tip.
           fetch-depth: 0
       - name: TruffleHog
-        uses: trufflesecurity/trufflehog@31ce31ee1abbcc7dc8eee5764c17121c3044c8b2 # v3.99.7
+        uses: trufflesecurity/trufflehog@ea68ca03c865c5f324e86e849ced20ed3cf9dbbb # v3.99.8
         with:
           # Whole tree and history, no base/head. The first version of this job
           # set base to the default branch and head to HEAD, which on a push to
