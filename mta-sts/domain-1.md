@@ -8,7 +8,7 @@ MTA-STS configuration and validation record for the primary domain.
 
 Hosted at: `https://mta-sts.domain-1.io/.well-known/mta-sts.txt`
 
-```
+```text
 version: STSv1
 mode: enforce
 mx: domain-1-io.p-v1.mx.microsoft
@@ -19,7 +19,7 @@ max_age: 604800
 
 ## DNS Records
 
-```
+```text
 mta-sts.domain-1.io        CNAME    <github-username>.github.io      (DNS-only)
 _mta-sts.domain-1.io       TXT      "v=STSv1; id=20260416"
 _smtp._tls.domain-1.io     TXT      "v=TLSRPTv1; rua=mailto:tlsrpt@domain-1.io"

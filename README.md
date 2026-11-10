@@ -7,6 +7,7 @@
 [![MTA-STS](https://img.shields.io/badge/MTA--STS-Enforced-00c853?style=flat-square)](https://mta-sts.nextlayersec.io/.well-known/mta-sts.txt)
 [![DNSSEC](https://img.shields.io/badge/DNSSEC-Enabled-00c853?style=flat-square)](https://dnssec-analyzer.verisignlabs.com/nextlayersec.io)
 [![License](https://img.shields.io/badge/License-CC%20BY--ND%204.0-blue?style=flat-square)](https://creativecommons.org/licenses/by-nd/4.0/)
+[![docs](https://github.com/Blackvectra/nextlayersec-email-security/actions/workflows/docs.yml/badge.svg)](https://github.com/Blackvectra/nextlayersec-email-security/actions/workflows/docs.yml)
 
 ---
 
@@ -22,7 +23,7 @@ a single Microsoft 365 Business Premium tenant.
 
 Every control documented here has been implemented, validated, and verified against live DNS
 and M365 tenant configuration. Screenshots of all validation outputs are available in the
-[`/validation`](/validation) directory.
+[`/validation`](validation/) directory.
 
 ---
 
@@ -69,7 +70,7 @@ The full stack is required for complete inbound mail path hardening.
 
 ## Repository Structure
 
-```
+```text
 nextlayersec-email-security/
 |
 |-- dkim/
@@ -121,7 +122,7 @@ attacks where an attacker strips TLS from the delivery path.
 
 ### How it works
 
-```
+```text
 Sending MTA                DNS                    Policy Host             Receiving MTA
      |                      |                          |                       |
      |-- MX lookup -------->|                          |                       |
@@ -140,10 +141,10 @@ Sending MTA                DNS                    Policy Host             Receiv
 
 ### Policy file structure
 
-```
+```text
 version: STSv1
 mode: enforce
-mx: nextlayersec-io.p-v1.mx.microsoft
+mx: <domain-with-hyphens>.p-v1.mx.microsoft
 max_age: 604800
 ```
 
@@ -174,7 +175,7 @@ The `mta-sts` CNAME must be DNS-only (grey cloud).
 
 ### Required DNS records
 
-```
+```text
 # Policy host
 mta-sts.<domain>    CNAME    <user>.github.io      (DNS-only)
 
@@ -206,7 +207,7 @@ and is rejected before reaching the sending MTA.
 
 When DNSSEC is enabled in Exchange Online, the MX endpoint changes from:
 
-```
+```text
 # Standard endpoint
 domain-com.mail.protection.outlook.com
 
@@ -257,7 +258,7 @@ it has an active MX record.
 
 ### Required records for alias domains
 
-```
+```text
 # SPF - authorize the same sending infrastructure as primary
 v=spf1 include:spf.protection.outlook.com -all
 
@@ -276,7 +277,7 @@ v=DMARC1; p=reject; rua=mailto:dmarc@<domain>
 
 ## Exchange Online Hardening
 
-The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](/exchange-online/hardening-runbook.md).
+The full PowerShell hardening runbook is in [`/exchange-online/hardening-runbook.md`](exchange-online/hardening-runbook.md).
 
 ### Controls covered
 

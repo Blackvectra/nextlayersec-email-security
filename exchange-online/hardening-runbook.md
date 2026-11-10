@@ -31,6 +31,7 @@ Get-DnssecStatusForVerifiedDomain -DomainName yourdomain.com | Format-List *
 ```
 
 After enabling, update in DNS and mta-sts.txt:
+
 - MX record -> new `p-v1.mx.microsoft` endpoint from MxValue output
 - `mta-sts.txt` mx: value -> new endpoint
 - `_mta-sts` TXT id value -> bump to current date
@@ -243,6 +244,7 @@ Get-User -Identity breakglass@yourdomain.com | Format-List DisplayName, Authenti
 ```
 
 Break glass account requirements:
+
 - No authentication policy assigned
 - Excluded from Conditional Access policies that could lock the account out (e.g. device compliance, location restrictions)
 - Phishing-resistant MFA registered (FIDO2 security key stored offline in a sealed envelope or safe) — never leave a privileged account password-only

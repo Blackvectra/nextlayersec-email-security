@@ -18,7 +18,7 @@ Validated deployment process based on production deployments across multiple dom
 
 Create a new public repository. Recommended naming convention:
 
-```
+```text
 <domain>-mta-sts
 ```
 
@@ -28,7 +28,7 @@ Example: `<orgname>-mta-sts`
 
 ## Step 2 -- Repository File Structure
 
-```
+```text
 repo-root/
 |-- .nojekyll              <- REQUIRED - empty file, no content
 |-- .well-known/
@@ -48,7 +48,7 @@ as literal text). The file must be empty.
 
 ### `.well-known/mta-sts.txt`
 
-```
+```text
 version: STSv1
 mode: testing
 mx: <your-mx-record>
@@ -60,7 +60,7 @@ after validating with TLS-RPT reports. See [Enforce Mode](#enforce-mode) below.
 
 ### `CNAME`
 
-```
+```text
 mta-sts.<yourdomain>
 ```
 
@@ -83,7 +83,7 @@ Add the following records. **All must be DNS-only (grey cloud) -- no Cloudflare 
 Cloudflare proxying breaks GitHub Pages TLS certificate provisioning. Orange cloud
 on the CNAME will cause certificate errors and the policy file will not be served.
 
-```
+```text
 # Policy host CNAME
 Type:   CNAME
 Name:   mta-sts
@@ -121,7 +121,8 @@ curl https://mta-sts.<yourdomain>/.well-known/mta-sts.txt
 ```
 
 Expected output:
-```
+
+```text
 version: STSv1
 mode: testing
 mx: <your-mx-record>
@@ -129,6 +130,7 @@ max_age: 86400
 ```
 
 If you get a 404, check:
+
 1. `.nojekyll` file exists and is empty
 2. `.well-known/` folder exists with `mta-sts.txt` inside
 3. GitHub Pages deployment completed (green checkmark in Actions tab)
@@ -138,7 +140,7 @@ If you get a 404, check:
 
 ## Step 7 -- Verify DNS Records
 
-```
+```powershell
 # Verify policy signal
 nslookup -type=TXT _mta-sts.<yourdomain>
 
@@ -154,6 +156,7 @@ Use MXToolbox MTA-STS Lookup for complete validation:
 `https://mxtoolbox.com/SuperTool.aspx`
 
 Select MTA-STS Lookup, enter your domain. Confirm:
+
 - Record resolves correctly
 - Policy file fetched from correct URL
 - MX record matches policy file `mx:` value
@@ -172,20 +175,22 @@ Before switching to `mode: enforce`, confirm:
 To enforce:
 
 1. Update `mta-sts.txt`:
-```
-version: STSv1
-mode: enforce
-mx: <your-mx-record>
-max_age: 604800
-```
+
+   ```text
+   version: STSv1
+   mode: enforce
+   mx: <your-mx-record>
+   max_age: 604800
+   ```
 
 2. Update `_mta-sts` TXT record -- bump the `id` value:
-```
-v=STSv1; id=20260418
-```
 
-The `id` value signals receiving MTAs to re-fetch the policy. Any change works --
-using the current date in `YYYYMMDD` format is a simple convention.
+   ```text
+   v=STSv1; id=20260418
+   ```
+
+   The `id` value signals receiving MTAs to re-fetch the policy. Any change works --
+   using the current date in `YYYYMMDD` format is a simple convention.
 
 3. Commit and push. GitHub Pages redeploys automatically.
 
@@ -195,7 +200,7 @@ using the current date in `YYYYMMDD` format is a simple convention.
 
 If DNSSEC is enabled in Exchange Online, the MX endpoint changes format:
 
-```
+```text
 # Standard endpoint
 <domain-tld>.mail.protection.outlook.com
 
@@ -204,6 +209,7 @@ If DNSSEC is enabled in Exchange Online, the MX endpoint changes format:
 ```
 
 When switching to the DNSSEC-aware endpoint, update both:
+
 - MX record in Cloudflare DNS
 - `mx:` value in `mta-sts.txt`
 - `id` value in `_mta-sts` TXT record

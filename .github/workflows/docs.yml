@@ -1,31 +1,64 @@
+# Documentation checks — Markdown lint, link check, secret scan, OSINT redaction.
+#
+# Every third-party action is pinned to a commit SHA (version in the trailing
+# comment), not a tag: a tag can be re-pointed at a different commit, a SHA
+# cannot. Dependabot (.github/dependabot.yml, github-actions ecosystem) opens a
+# PR when a pinned action publishes a release, with the new SHA in the diff.
+
 name: docs
 
 on:
+  # Manual runs stay available alongside the automatic triggers.
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    # Weekly link check only (the other jobs skip on schedule): external pages
+    # move without any commit here, so link rot is found between pushes.
+    - cron: '23 6 * * 2'
 
 permissions:
   contents: read
 
+# One run per pull request (or branch). A newer push to the same pull request
+# cancels the older run; runs on main and scheduled runs are never cancelled,
+# so every commit on main keeps a complete result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   markdownlint:
     name: Markdown lint
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: DavidAnson/markdownlint-cli2-action@v16
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Rules and the reason for each disabled one live in .markdownlint-cli2.yaml.
+      - uses: DavidAnson/markdownlint-cli2-action@913db5cf77ef624b914090bad9e1615f7f6e099d # v25.0.0
         with:
           globs: '**/*.md'
 
   linkcheck:
     name: Link check
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - name: lychee
-        uses: lycheeverse/lychee-action@v2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
+      - name: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          # --root-dir: a root-relative link such as /dns/dns-setup.md resolves
+          # against the checkout, the way GitHub renders it, instead of the
+          # runner's filesystem root (which is what failed the first run).
+          # Placeholder hosts (domain-1.io, <tenant>, ...) are excluded here and
+          # in .lycheeignore; code blocks are not scanned (lychee's default).
           args: >-
             --no-progress
             --max-concurrency 8
@@ -33,6 +66,7 @@ jobs:
             --retry-wait-time 5
             --max-retries 2
             --accept 200,206,429
+            --root-dir ${{ github.workspace }}
             --exclude-path validation
             --exclude '^https?://(domain-[0-9]+|<.+>)'
             './**/*.md'
@@ -40,29 +74,40 @@ jobs:
 
   secret-scan:
     name: Secret scan
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
+          # TruffleHog scans git history; fetch all commits, not just the tip.
           fetch-depth: 0
       - name: TruffleHog
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@31ce31ee1abbcc7dc8eee5764c17121c3044c8b2 # v3.99.7
         with:
-          path: ./
-          base: ${{ github.event.repository.default_branch }}
-          head: HEAD
-          extra_args: --only-verified
+          # Whole tree and history, no base/head. The first version of this job
+          # set base to the default branch and head to HEAD, which on a push to
+          # main is the same commit; the action exits non-zero when the two
+          # match, so the push run could never pass. --results=verified,unknown
+          # reports secrets TruffleHog confirmed against a live service plus
+          # ones it could not reach to disprove; confirmed false positives drop.
+          extra_args: --results=verified,unknown
 
   osint-check:
     name: OSINT redaction check
+    if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Fail on un-redacted operational identifiers
         run: |
-          set -e
-          # The README footer and header badges intentionally use the brand URL;
-          # exclude them and SECURITY.md (which documents the redaction policy).
+          set -euo pipefail
+          # The README header badges and footer intentionally use the brand URL;
+          # SECURITY.md documents the redaction policy and is excluded.
           patterns=(
             'mattlevorson'
             'Nextlayersec665'

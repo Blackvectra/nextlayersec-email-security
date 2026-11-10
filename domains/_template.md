@@ -30,7 +30,7 @@ Complete each section in order. Do not advance to enforcement until prerequisite
 
 ## SPF
 
-```
+```text
 v=spf1 include:spf.protection.outlook.com -all
 ```
 
@@ -43,9 +43,9 @@ v=spf1 include:spf.protection.outlook.com -all
 
 ## DKIM
 
-```
-selector1._domainkey.<domain>    CNAME    selector1-<tenant>._domainkey.microsoft.com
-selector2._domainkey.<domain>    CNAME    selector2-<tenant>._domainkey.microsoft.com
+```text
+selector1._domainkey.<domain>    CNAME    selector1-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
+selector2._domainkey.<domain>    CNAME    selector2-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 ```
 
 - [ ] CNAME records published in DNS
@@ -57,7 +57,7 @@ selector2._domainkey.<domain>    CNAME    selector2-<tenant>._domainkey.microsof
 
 ## DMARC
 
-```
+```text
 v=DMARC1; p=none; rua=mailto:dmarc@domain-1.io
 ```
 
@@ -72,7 +72,7 @@ v=DMARC1; p=none; rua=mailto:dmarc@domain-1.io
 
 ## MTA-STS
 
-```
+```text
 version: STSv1
 mode: enforce
 mx: <domain-endpoint>.p-v1.mx.microsoft
@@ -102,7 +102,7 @@ max_age: 604800
 
 ## CAA Records
 
-```
+```text
 <domain>    CAA    0 issue "pki.goog"
 <domain>    CAA    0 issue "letsencrypt.org"
 <domain>    CAA    0 issue "digicert.com"

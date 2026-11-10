@@ -21,10 +21,12 @@ Personal brand domain. Currently on external provider. Migration to primary M365
 ## Migration Plan
 
 ### Pre-migration (do now)
+
 - [ ] Lower MX TTL to 300 in DNS (5 minutes) -- do 24-48 hours before cutover
 - [ ] Export existing mail to local archive (light volume)
 
 ### Migration day
+
 - [ ] Add `domain-3.com` to M365 tenant (Settings -> Domains -> Add)
 - [ ] Verify domain ownership via TXT record
 - [ ] Enable DKIM in Defender portal -- publish CNAME records in DNS
@@ -35,6 +37,7 @@ Personal brand domain. Currently on external provider. Migration to primary M365
 - [ ] Publish DMARC at `p=none` with rua reporting
 
 ### Post-migration hardening
+
 - [ ] Monitor DMARC aggregate reports (2-4 weeks)
 - [ ] Tighten DMARC to `p=reject`
 - [ ] Deploy MTA-STS (testing mode first)
@@ -57,7 +60,7 @@ primary tenant inbox. No separate mailbox or license required.
 
 Document current MX/SPF values here before changing anything.
 
-```
+```powershell
 # Run before migration and paste output here
 nslookup -type=MX domain-3.com
 nslookup -type=TXT domain-3.com

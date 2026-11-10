@@ -11,6 +11,9 @@ config:
     siblings_only: true
   # MD036 emphasis as heading — allowed for the README badge row.
   MD036: false
+  # MD060 table column style — disabled. The tables use compact `|---|` delimiter rows by
+  # design; the rule (new in markdownlint v0.42) would want every cell padded to match.
+  MD060: false
 globs:
   - '**/*.md'
 ignores:

@@ -61,7 +61,7 @@ Get-DkimSigningConfig -Identity yourdomain.com | Format-List Enabled, Selector1K
 
 ## Required DNS Records
 
-```
+```text
 selector1._domainkey.<domain>    CNAME    selector1-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 selector2._domainkey.<domain>    CNAME    selector2-<domain-with-hyphens>._domainkey.<tenant>.onmicrosoft.com
 ```

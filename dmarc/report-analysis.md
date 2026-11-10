@@ -88,27 +88,32 @@ but impractical at volume.
 ## Interpreting Results
 
 ### Healthy report
+
 - Known sending IPs — M365 outbound, authorized third parties
 - DKIM pass + SPF pass on all legitimate sources
 - Disposition reflects your current policy — none, quarantine, or reject
 - Zero unknown sources with high message counts
 
 ### SPF fail + DKIM fail
+
 - Unknown source sending as your domain
 - Could be spoofing attempt or misconfigured third-party sender
 - At p=reject these are blocked — verify disposition shows reject
 
 ### SPF pass + DKIM fail
+
 - Message forwarded through another server — SPF breaks on forward
 - DKIM should still pass on forwarded messages if signing is correct
 - Persistent DKIM fail on known sources = key or selector issue
 
 ### SPF fail + DKIM pass
+
 - Sender not included in SPF record
 - DMARC still passes because DKIM alignment holds
 - Add sender to SPF record to clean up the signal
 
 ### SPF fail + DKIM fail from your own IPs
+
 - SPF misconfiguration — your sending infrastructure not authorized
 - Verify `include:spf.protection.outlook.com` is in your SPF record
 - Check for SPF lookup limit exceeded — max 10 DNS lookups
@@ -133,11 +138,13 @@ but impractical at volume.
 Only advance DMARC policy when aggregate reports confirm:
 
 **p=none -> p=quarantine**
+
 - All legitimate senders passing DKIM and SPF
 - No unknown sources generating volume
 - RUA reports reviewed for minimum 2-4 weeks
 
 **p=quarantine -> p=reject**
+
 - Zero legitimate sources failing authentication
 - Quarantine period showed no legitimate mail impacted
 - All third-party senders aligned and validated
@@ -170,8 +177,8 @@ Only advance DMARC policy when aggregate reports confirm:
 
 | Domain | RUA Address | Reports Receiving | Last Reviewed |
 |---|---|---|---|
-| `domain-1.io` | dmarc@domain-1.io | Yes | 2026-04-23 |
-| `domain-2.dev` | dmarc@domain-1.io | Yes (consolidated to primary) | 2026-04-23 |
+| `domain-1.io` | <dmarc@domain-1.io> | Yes | 2026-04-23 |
+| `domain-2.dev` | <dmarc@domain-1.io> | Yes (consolidated to primary) | 2026-04-23 |
 | `domain-3.com` | — | Pending (pre-migration) | — |
 
 ---

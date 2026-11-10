@@ -1,0 +1,24 @@
+# Dependabot configuration — keeps the SHA-pinned GitHub Actions current.
+#
+# This is a documentation repository: the only dependencies are the actions in
+# .github/workflows/docs.yml, each pinned to a commit SHA. Dependabot proposes
+# the new SHA (and updates the version comment) when an action releases.
+
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 2
+    # Wait a week after a release before proposing it: most malicious or
+    # broken action releases are found and pulled within days.
+    cooldown:
+      default-days: 7
+    commit-message:
+      prefix: "ci(deps)"
+    groups:
+      # One grouped PR a week instead of one per action.
+      actions:
+        patterns:
+          - "*"
