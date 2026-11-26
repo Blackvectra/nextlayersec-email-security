@@ -84,7 +84,7 @@ jobs:
           # TruffleHog scans git history; fetch all commits, not just the tip.
           fetch-depth: 0
       - name: TruffleHog
-        uses: trufflesecurity/trufflehog@31ce31ee1abbcc7dc8eee5764c17121c3044c8b2 # v3.99.7
+        uses: trufflesecurity/trufflehog@3bd2b5887eb0efb8fa18bfd1d296032924e4ffdc # v3.99.9
         with:
           # Whole tree and history, no base/head. The first version of this job
           # set base to the default branch and head to HEAD, which on a push to
